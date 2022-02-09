@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <artifactId>instrument-route</artifactId>
+  <build>
+    <plugins>
+
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <artifactId>instrument-client</artifactId>
+      <groupId>de.dl.hyp</groupId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>instrument-api</artifactId>
+      <groupId>de.dl.hyp</groupId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- Camel -->
+    <dependency>
+      <artifactId>camel-spring-boot-starter</artifactId>
+      <groupId>org.apache.camel.springboot</groupId>
+    </dependency>
+    <!-- Spring Boot -->
+    <dependency>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <groupId>org.springframework.boot</groupId>
+    </dependency>
+    <dependency>
+      <artifactId>camel-http-starter</artifactId>
+      <groupId>org.apache.camel.springboot</groupId>
+    </dependency>
+    <!-- support swagger api-doc -->
+    <dependency>
+      <artifactId>camel-gson-starter</artifactId>
+      <groupId>org.apache.camel.springboot</groupId>
+    </dependency>
+
+    <!-- use http as rest producer -->
+    <dependency>
+      <artifactId>camel-stream-starter</artifactId>
+      <groupId>org.apache.camel.springboot</groupId>
+    </dependency>
+
+    <dependency>
+      <artifactId>camel-rest-openapi-starter</artifactId>
+      <groupId>org.apache.camel.springboot</groupId>
+    </dependency>
+
+    <!-- spring -->
+    <dependency>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <groupId>org.springframework.boot</groupId>
+    </dependency>
+    <dependency>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+      <groupId>org.springframework.boot</groupId>
+    </dependency>
+
+    <dependency>
+      <artifactId>spring-boot-devtools</artifactId>
+      <groupId>org.springframework.boot</groupId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <groupId>org.springframework.boot</groupId>
+      <optional>true</optional>
+    </dependency>
+    <!-- helpers -->
+    <dependency>
+      <artifactId>lombok</artifactId>
+      <groupId>org.projectlombok</groupId>
+      <optional>true</optional>
+    </dependency>
+  </dependencies>
+  <description>instrument-route</description>
+  <modelVersion>4.0.0</modelVersion>
+  <name>hyp-instrument-route</name>
+  <parent>
+    <artifactId>hyp-instrument</artifactId>
+    <groupId>de.dl.hyp</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <properties>
+    <main.basedir>${project.parent.parent.basedir}</main.basedir>
+  </properties>
+
+  <version>0.0.1-SNAPSHOT</version>
+
+</project>

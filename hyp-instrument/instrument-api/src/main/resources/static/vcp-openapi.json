@@ -1,0 +1,3894 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "description": "DL Virtual Captive Platform REST API Integration with External Systems",
+    "version": "1.0.0",
+    "title": "VCP REST API Integration"
+  },
+  "tags": [
+    {
+      "name": "partner"
+    },
+    {
+      "name": "asset"
+    },
+    {
+      "name": "quote"
+    },
+    {
+      "name": "documents"
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://webleasingapi.deutsche-leasing.com/api/v1"
+    }
+  ],
+  "paths": {
+    "/oauth/token": {
+      "post": {
+        "operationId": "getToken",
+        "summary": "Get token",
+        "description": "Get a bearer token by providing the client id and the client secret from the External System.",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/GetTokenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTokenResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/ping": {
+      "post": {
+        "operationId": "Ping",
+        "summary": "Ping",
+        "description": "View API status form VCP",
+        "security": [
+          {
+            "oauth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/contentType"
+          },
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PingRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PingResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/values/{key}": {
+      "get": {
+        "operationId": "GetValues",
+        "summary": "Get values",
+        "description": "View dictionary values for specific dictionaries",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/contentType"
+          },
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "in": "path",
+            "name": "key",
+            "description": "'The key of the dictionary. A list is provided in case of failure, which is: \n  ZootPartnerSearchConfig, EnvironmentFriendly, Currency, UsageType, ConditionType, PartnerType, FinancialProduct, FinancialProductType, InterestType, ServiceType, ScheduleType.\nAll the values from this operation are also covered by the annex *List of Property possible values*.'",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Currency"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetValuesResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/partners": {
+      "get": {
+        "operationId": "GetPartner",
+        "summary": "Get partner",
+        "description": "Get more detail from a specific partner available in a Credit Bureau System.  This needs to be called when a *PartnerId* is not available. The external system  receives all details of the selected partner. These are taken from the Credit Bureau  system only if not already present in Charisma System.      ",
+        "tags": [
+          "partner"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "in": "query",
+            "name": "partnerId",
+            "description": "Partner identification number from the Charisma System.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "example": "1000115"
+          },
+          {
+            "in": "query",
+            "name": "partnerCode",
+            "description": "The code of the partner type from Charisma System.",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "example": "1000115"
+          },
+          {
+            "in": "query",
+            "name": "origin",
+            "description": "The source system of the Partner. Based on this field the system should know from where to retrieve partner data (Charisma System or Credit Bureau System).",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "example": "KEYSFIN"
+          },
+          {
+            "in": "query",
+            "name": "bureauId",
+            "description": "Partner identification field from the Credit Bureau System.",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "example": "RO1000115AA"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Partner informations response output.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Partner"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      },
+      "post": {
+        "operationId": "GetPartners",
+        "summary": "Get partners",
+        "description": "Search partner in DL database based on filters send as parameters. If it isn’t found  in DL database an interrogation to Credit Bureaus is performed to get general partner  data corresponding with the filter. A list of partners (with general information) is returned. This will contain 2 partner categories (one that are from Charisma System (having only *PartnerId*) and another one from Credit Bureau System (having only *Origin* and *BureauId*)).",
+        "tags": [
+          "partner"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/contentType"
+          },
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetPartnersRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Partners response output.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPartnersResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/partners/{partnerId}": {
+      "get": {
+        "operationId": "GetPartnerByPartnerId",
+        "summary": "Get partner by partner id",
+        "description": "Get more detail from a specific partner available in Charisma System. The external system receives all details of the selected partner from Charisma System.",
+        "tags": [
+          "partner"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "in": "path",
+            "name": "partnerId",
+            "description": "Partner identification number from the Charisma System.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": "1000115"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Partner"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/partners/{origin}/{bureauId}": {
+      "get": {
+        "operationId": "GetPartnerByOriginAndBureauId",
+        "summary": "Get partner by origin and bureauId",
+        "description": "Get more detail from a specific partner available in a Credit Bureau System. This needs to be called when a *PartnerId* is not available. The external system receives all details of the selected partner. These are taken from the Credit Bureau system only if not already present in Charisma System.",
+        "tags": [
+          "partner"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "in": "path",
+            "name": "origin",
+            "description": "The source system of the Partner. Based on this field the system should know from where to retrieve partner data (Charisma System or Credit Bureau System).",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "KEYSFIN"
+          },
+          {
+            "in": "path",
+            "name": "bureauId",
+            "description": "Partner identification field from the Credit Bureau System.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "RO1000115AA"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Partner informations response output.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Partner"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/assetTypes": {
+      "get": {
+        "operationId": "GetAssetTypes",
+        "summary": "Get asset types",
+        "description": "Returned the assets list for a specific VCP quote. It can be called progressively  to respect internal logic from VCP. Subsequent calls return only compatible asset  types with those already selected on specific quote. Each subsequent call must preceded by a call for Sync Quote.      ",
+        "tags": [
+          "asset"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "in": "query",
+            "name": "currencyId",
+            "description": "'CurrencyId is required when CurrencyCode is NULL. The id of the currency in Charisma System.  Please see the annex *List of Property possible values*, sheet *Currency*, column *Id*. Values can also be found by calling */values/currency* (field: *Id*).'",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true,
+              "example": 28
+            }
+          },
+          {
+            "in": "query",
+            "name": "currencyCode",
+            "description": "'CurrencyCode is required when CurrencyId is NULL. The code of the currency in Charisma System.  Please see the annex *List of Property possible values*, sheet *Currency*, column *Code*. Values can also be found by calling */values/currency* (field: *Code*).'",
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "example": "EUR"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All available asset types.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAssetTypesResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/quotes/syncQuote": {
+      "post": {
+        "operationId": "SyncQuote",
+        "summary": "Sync quote",
+        "description": "This method synthetizes all changes done to a quote. It is sent to VCP all quote data to update the VCP information. If the quote is not created, based on the received information, it will be created in this method.",
+        "tags": [
+          "quote"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/contentType"
+          },
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncQuoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Quote and quote assets identifiers.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncedQuote"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/quotes/{quoteId}": {
+      "get": {
+        "operationId": "getQuote",
+        "summary": "Get quote",
+        "description": "The VCP quote.",
+        "tags": [
+          "quote"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "$ref": "#/components/parameters/quoteId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the details of a quote.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncedQuote"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/quotes/{quoteId}/assetTypes": {
+      "get": {
+        "operationId": "GetQuoteAssetTypes",
+        "summary": "Get quote asset types",
+        "description": "Retrieves the asset types that respect the configured conditions and can be added on a specific quote. This conditions are configured by DeutscheLeasing in Charisma System. ",
+        "tags": [
+          "quote",
+          "asset"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "$ref": "#/components/parameters/quoteId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset types list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetQuoteAssetTypesResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/quotes/{quoteId}/products/definitions": {
+      "get": {
+        "operationId": "getQuoteProductsDefinitions",
+        "summary": "Get quote products definitions",
+        "description": "Get financial product definitions available for a specific quote.  This is not mandatory to be called as it retrieves financial configuration  restrictions that are used as restrictions in Charisma System.",
+        "tags": [
+          "quote"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "$ref": "#/components/parameters/quoteId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns all available product type definitions with constranints that can be used on a specific quote.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetQuoteProductsDefinitionsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/quotes/{quoteId}/scoringQuestions": {
+      "get": {
+        "operationId": "getQuoteScoringQuestions",
+        "summary": "Get quote scoring questions",
+        "description": "Get scoring questions for a specific quote.",
+        "tags": [
+          "quote"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "$ref": "#/components/parameters/quoteId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a list of questions in order to have additional informations provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetQuoteScoringQuestionsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/quotes/{quoteId}/approval": {
+      "get": {
+        "operationId": "getApproval",
+        "summary": "Get approval",
+        "description": "Get current approval status.",
+        "tags": [
+          "quote"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "$ref": "#/components/parameters/quoteId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the last approval status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApprovalResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      },
+      "post": {
+        "operationId": "startApproval",
+        "summary": "Start approval",
+        "description": "Start approval (indicative approval) of a quote.",
+        "tags": [
+          "quote"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/contentType"
+          },
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "$ref": "#/components/parameters/quoteId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartApprovalRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the *status* of the approval.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StartApprovalResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/quotes/{quoteId}/approval/cancel": {
+      "post": {
+        "operationId": "cancelApproval",
+        "summary": "Cancel approval",
+        "description": "Cancel the process of a final approval if this was started.",
+        "tags": [
+          "quote"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/contentType"
+          },
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "$ref": "#/components/parameters/quoteId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the *quoteId* of the quote approval that was cancelled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelApprovalResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/quotes/{quoteId}/contract": {
+      "post": {
+        "operationId": "startContract",
+        "summary": "Start contract",
+        "description": "Create a contract for the provided assets.",
+        "tags": [
+          "quote"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/contentType"
+          },
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "$ref": "#/components/parameters/quoteId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartContractRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the *contractId* and the *contractNumber* of the created contract.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StartContractResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/quotes/{quoteId}/contract/{contractId}/generateSepaMandate": {
+      "post": {
+        "operationId": "generateSepaMandate",
+        "summary": "Generate sepa mandate",
+        "description": "In order to collect Direct Debits on a bank account, any Creditor needs to get the approval  of the Debtor through the acquisition of a valid SEPA Direct Debit Mandate. ",
+        "tags": [
+          "quote"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/contentType"
+          },
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "$ref": "#/components/parameters/quoteId"
+          },
+          {
+            "in": "path",
+            "name": "contractId",
+            "description": "The id of the contract from Charisma System.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "example": "90001"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateSepaMandateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the *document number* of the created mandate.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateSepaMandateResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/quotes/{quoteId}/documents": {
+      "get": {
+        "operationId": "getDocuments",
+        "summary": "Get documents",
+        "description": "Get a list with the document templates available for download for this quote (with {quoteId}).  Each document template will also contain all the uploaded files. The list will be generated for the default quote product. The default quote product is considered to be the selected product or the first product from the list.",
+        "tags": [
+          "documents"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "$ref": "#/components/parameters/quoteId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDocumentsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/quotes/{quoteId}/{quoteProductId}/documents/": {
+      "get": {
+        "operationId": "getSpecificDocuments",
+        "summary": "Get specific documents",
+        "description": "Get a list with the document templates available for download for this quote (with {quoteId}) for the specified product (by {quoteProductId}). Each document template will also contain all the uploaded files.",
+        "tags": [
+          "documents"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "$ref": "#/components/parameters/quoteId"
+          },
+          {
+            "in": "path",
+            "name": "quoteProductId",
+            "description": "The id of the quote product.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "example": "90001"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetSpecificDocumentsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/quotes/{quoteId}/documents/upload": {
+      "post": {
+        "operationId": "uploadDocument",
+        "summary": "Upload a document file.",
+        "description": "Upload a document file. ",
+        "tags": [
+          "documents"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/contentType"
+          },
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "$ref": "#/components/parameters/quoteId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadDocumentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadDocumentResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/quotes/{quoteId}/documents/download": {
+      "post": {
+        "operationId": "downloadDocument",
+        "summary": "Download a document file.",
+        "description": "Download a document file by using a document template provided by *getDocuments* operation.",
+        "tags": [
+          "documents"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/contentType"
+          },
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "$ref": "#/components/parameters/quoteId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DownloadDocumentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadedDocumentResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    },
+    "/quotes/{quoteId}/documents/{fileId}": {
+      "get": {
+        "operationId": "downloadDocumentByFileId",
+        "summary": "Download document by file id",
+        "description": "Download a previously uploaded file.",
+        "tags": [
+          "documents"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/requestId"
+          },
+          {
+            "$ref": "#/components/parameters/countryCode"
+          },
+          {
+            "$ref": "#/components/parameters/vendorCode"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/legalEntity"
+          },
+          {
+            "$ref": "#/components/parameters/quoteId"
+          },
+          {
+            "in": "path",
+            "name": "fileId",
+            "description": "The id of the file to be downloaded from Charisma System.  It is provided by the *getDocuments* operation (in *uploadedFiles/fileId*) or by the *uploadDocument* operation (*fileId*).",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "4a90e5c0-90ee-462a-b4d4-ae9961b52090"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadedDocumentResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/ResponseErrors"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ProductDocumentTemplate": {
+        "type": "object",
+        "required": [
+          "name",
+          "properties"
+        ],
+        "properties": {
+          "id": {
+            "description": "Id is required when Code is NULL.",
+            "nullable": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          "code": {
+            "description": "Code is required when Id is NULL.",
+            "nullable": true,
+            "type": "string"
+          },
+          "name": {
+            "description": "Required document template alias from product definition from Charisma System.",
+            "nullable": true,
+            "type": "string"
+          },
+          "uploadedFiles": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "object",
+              "properties": {
+                "fileId": {
+                  "nullable": false,
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "4a90e5c0-90ee-462a-b4d4-ae9961b52090"
+                },
+                "fileName": {
+                  "nullable": false,
+                  "type": "string",
+                  "example": "Declaratie KYC IFN (3).PDF"
+                },
+                "mediaContentType": {
+                  "nullable": true,
+                  "type": "string",
+                  "example": "application/pdf"
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": "array",
+            "nullable": false,
+            "items": {
+              "properties": {
+                "name": {
+                  "nullable": false,
+                  "type": "string",
+                  "example": "ClientId"
+                },
+                "value": {
+                  "nullable": true,
+                  "type": "string",
+                  "example": "4258"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AssetType": {
+        "description": "List of asset types",
+        "type": "object",
+        "required": [
+          "assetId",
+          "assetCode"
+        ],
+        "properties": {
+          "assetId": {
+            "description": "The id of the asset from Charisma system. Please see the dictionary values in Annex, excel file *List of Property possible values*, sheet *Asset*, column  *Model Id*",
+            "nullable": false,
+            "type": "integer",
+            "format": "int32",
+            "example": "92227"
+          },
+          "assetCode": {
+            "description": "The code of the asset from Charisma system. Please see the dictionary values in Annex, excel file *List of Property possible values*, sheet *Asset*, column  *Model Code*. This is the id of the model in AME system.",
+            "nullable": false,
+            "type": "string",
+            "example": "9166"
+          },
+          "assetName": {
+            "description": "The name of the asset from Charisma system. Please see the dictionary values in Annex, excel file *List of Property possible values*, sheet *Asset*, column  *Model Name*",
+            "nullable": true,
+            "type": "string",
+            "example": "DIGITAL LASER SORTER"
+          },
+          "brandCode": {
+            "description": "The name of the asset brand from the Charisma System.",
+            "nullable": false,
+            "type": "string"
+          },
+          "brandName": {
+            "description": "The name of the asset brand from the Charisma System.",
+            "nullable": true,
+            "type": "string",
+            "example": "Volvo"
+          },
+          "kindOfObjectCode": {
+            "description": "The kind of object code of the asset from Charisma System.",
+            "nullable": false,
+            "type": "string"
+          },
+          "kindOfObjectName": {
+            "description": "The kind of object name of the asset from Charisma System.",
+            "nullable": true,
+            "type": "string",
+            "example": "Compactors"
+          }
+        }
+      },
+      "ResponseError": {
+        "type": "object",
+        "description": "\"List of errors (errorCode => errorMessage): General.RequestHeaders.MissingContentType                   =>        Mandatory request header 'Content-Type' is missing. General.RequestHeaders.MissingCountryCode                   =>        Mandatory request header 'X-CountryCode' is missing. General.RequestHeaders.InvalidCountryCode                   =>        Request header 'X-CountryCode' value is not valid. General.RequestHeaders.MissingVendorCode                    =>        Mandatory request header 'X-VendorCode' is missing. General.RequestHeaders.InvalidVendorCode                    =>        Request header 'X-VendorCode' value is not valid. General.RequestHeaders.MissingUsername                      =>        Mandatory request header 'X-Username' is missing. General.RequestHeaders.MissingLegalEntity                   =>        Mandatory request header 'X-LegalEntity' is missing. General.RequestHeaders.InvalidUsername                      =>        The provided application username from header 'X-Username' is not valid. General.InternalError                                       =>        Internal error occured. Generic.InvalidRequest                                      =>        Request marked invalid when matching '{fieldType}': No match found for Code: '{code}'.\n                                                                      (found value: {value}, expected value: {expectedId}).\nGeneric.InvalidRequest                                      =>        Request marked invalid when matching '{fieldType}': No match found for Id: {id}.\n                                                                      (found value: '{value}', expected value: '{expectedCode}').\nGeneral.Quote.QuoteNotFound                                 =>        The quote you are looking for could not be found (QuoteId: {quoteId}). General.Quote.OfferNotFound                                 =>        An offer was not created for this quote (QuoteId: {quoteId}). ApiOAuth.BadRequest                                         =>        Grant type (grant_type) was not provided correctly. ApiOAuth.InvalidCredentials                                 =>        Credentials(client_id and/or client_secret) are not valid. Ping.RequestModel.FieldMinimumLength                        =>        The length of {PropertyName} must be at least 3 characters. Ping.RequestModel.FieldHasNoDigit                            =>        The content of {PropertyName} must not contain any digits. GetPartners.RequestModel.FieldNotEmpty                      =>        The {PropertyName} field cannot be empty. GetPartners.RequestModel.FieldNotEmpty                      =>        No filter was provided. GetPartners.RequestModel.ArrayNotNull                        =>        The {PropertyName} field cannot be null. At least an empty array needs to be provided. GetPartners.RequestModel.ObjectNotFound                      =>        Filter code [FilterCode] not supported. GetPartners.RequestModel.DuplicateObjects                    =>        Partner filter codes are duplicated. GetPartners.PartnerFilter.FieldNotEmpty                      =>        The {PropertyName} field cannot be empty for filter with 'FilterValue': {x.FilterValue}. GetPartners.PartnerFilter.FieldNotEmpty                      =>        The {{PropertyName}} field cannot be empty for filter with 'FilterCode': {x.FilterCode}. GetPartners.InvalidSearchFilters                            =>        The filter(s) should satisfy the next condition: {searchCondition.SearchConditionText}. GetPartner.RequestModel.MissingField(s)                      =>        'PartnerId' or 'PartnerCode' or ('Origin' and 'BureauId') need to be provided. GetPartner.InvalidPartnerId                                 =>        PartnerId [PartnerId] not existing. GetAssetTypes.RequestModel.FieldNotEmpty                    =>        The {PropertyName} field cannot be empty. GetAssetTypes.RequestModel.MissingField                     =>        Missing required field. 'CurrencyId' or 'CurrencyCode' need to be provided. GetFinancialProductDefinitions.RequestModel-FieldNotEmpty   =>        The {PropertyName} field cannot be empty. GetFinancialProductDefinitions.InvalidQuoteId               =>        The provided quoteId is invalid. GetQuotePaymentSchedule.RequestModel-FieldNotEmpty          =>        The {PropertyName} field cannot be empty. GetScoreQuestions.RequestModel-FieldNotEmpty                =>        The {PropertyName} field cannot be empty. GetQuote.RequestModel-FieldNotEmpty                         =>        The {PropertyName} field cannot be empty. GetDocuments.RequestModel-FieldNotEmpty                     =>        The {PropertyName} field cannot be empty. UploadDocument.RequestModel-FieldNotEmpty                   =>        The {PropertyName} field cannot be empty. UploadDocument.ProductDocumentTemplate-FieldNotEmpty        =>        The {PropertyName} field cannot be empty. UploadDocument.ProductDocumentTemplate-MandatoryField       =>        The {PropertyName} field is mandatory. DownloadDocument.RequestModel-FieldNotEmpty                 =>        The {PropertyName} field cannot be empty. DownloadDocument.TemplateRequestModel-FieldNotEmpty         =>        The {PropertyName} field cannot be empty. DownloadDocument.DMSRequestModel-FieldNotEmpty              =>        The {PropertyName} field cannot be empty. DownloadDocument.DMSRequestModel-FieldWrong                 =>        The {PropertyName} is wrong. DownloadDocument.ProductDocumentTemplate-FieldNotEmpty      =>        The {PropertyName} field cannot be empty. DownloadDocument.ProductDocumentTemplate-MandatoryField     =>        The {PropertyName} field is mandatory. DownloadDocument.ProductDocumentTemplate-LengthProperties   =>        Document cannot be downloaded due to unspecified Document Properties. DownloadDocument.ProductDocumentTemplate-PropertyFieldNotEmpty  =>    Document cannot be downloaded due to unspecified Document Properties. DownloadDocument.InvalidTemplateId                          =>        The provided TemplateId is not valid for the given quote. QuoteManager.DownloadDocument-FieldNotEmpty                 =>        There is no financial product selected on quote QuoteManager.DownloadDocument-Failed                        =>        The template document could not be found. QuoteManager.DownloadDocument-Failed                        =>        Failed to load the export template file ({0})! QuoteManager.DownloadDocument-MissingTemplate               =>        No template is available for download. QuoteManager.DownloadDocument-FieldNotEmpty                 =>        Document cannot be downloaded due to missing Document Properties. QuoteManager.UploadDocument-FieldNotEmpty                   =>        Document cannot be uploaded due to missing Document Properties. SyncQuote.RequestModel.FieldNotEmpty                        =>        The {PropertyName} field cannot be empty. SyncQuote.RequestModel.FieldParentIdExists                  =>        Provided parent assetId is not valid in the quote. SyncQuote.RequestModel.FieldNotNull                          =>        {PropertyName} should exist. SyncQuote.RequestModel.ArrayNotNullOrEmpty                  =>        The {PropertyName} field cannot be null or empty array. SyncQuote.ActionNotAllowed                                  =>        Quote must have status with code NOFINPRD(No finance product). At this point an offer exists (only product updates are available). SyncQuote.QuoteAsset.FieldNotEmpty                          =>        The {PropertyName} field cannot be empty. SyncQuote.QuoteAsset.FieldNotNegativeValue                  =>        The {PropertyName} field cannot have a negative value. SyncQuote.QuoteProduct.InvalidProductId                     =>        Product Id (ProductId) does not exist. SyncQuote.QuoteProduct.InvalidScheduleTypeId                =>        Schedule Type Id (ScheduleTypeId) does not exist. SyncQuote.SyncQuoteHeader.InvalidQuoteId                    =>        QuoteId [{QuoteId}] is not valid. SyncQuote.SyncQuoteHeader.ActionNotAllowed.0001              =>        Quote must have status with code NOFINPRD(No finance product) or INCCSTD(Incomplete customer data). SyncQuote.SyncQuoteHeader.ActionNotAllowed.0002              =>        Currency cannot be changed on a quote that has assets. SyncQuote.SyncQuoteHeader.ActionNotAllowed.0003              =>        Client cannot be changed on a quote that has assets. SyncQuote.SyncQuoteHeader.ActionNotAllowed.0004             =>        This user cannot change this quote. Vendor or dealer of the user is different of the ones of the quote. SyncQuote.SyncQuoteHeader.InvalidPartnerId                  =>        The provided value for Partner Id field ({PartnerId}) was not found. SyncQuote.SyncAssets.InvalidAssetNetPrice                    =>        The asset net price value must be greater than 0. SyncQuote.SyncAssets.InvalidAdditionalCosts                 =>        Additional costs can not be more than 10% of the asset price. SyncQuote.SyncAssets.InvalidManufacturingYear               =>        Manufactoring years [{Years}] invalid -  can only be in the last 20 years. SyncQuote.SyncAssets.NoPossibleAssetsAvailableForDealerId   =>        There are no assets configured and available for this dealer ({quote.DealerId}). SyncQuote.SyncAssets.AssetsNotAllowed                        =>        This asset combination is not allowed. The assets on request do not match the possible assets for the given Quote for the selected currency and dealer. SyncQuote.SyncAssets.SupplierNotFound                        =>        The asset suppliers on request do not match the list of possible suppliers for the given Quote. SyncQuote.SyncAssets.MissingPriceCards                      =>        No valid common pricecard was found for the provided assets. SyncQuote.SyncProduct.PercentAndAmountNotAllowed            =>        The product has both the amount and the percent for Residual value or DownPayment. SyncQuote.SyncProduct.MissingProducts                        =>        Provided Financial product is not possible. There is no product that matches the product from the request (with Duration : {Duration} and Product id: {ProductId}) SyncQuote.SyncProduct.InterestTypeNotAllowed                =>        The interest type from the request does not match the interest type on the existing Product. SyncQuote.SyncProduct.DuplicatedServicesNotAllowed          =>        There are duplicated ServiceTypeIds for the given Product. SyncQuote.SyncProduct.ServicesNotAllowed                    =>        The services on request do not match the possible services for the given Product. SyncQuote.SyncProduct.ServicePercentNotAllowed.MinError     =>        There are service with 'ServiceTypeId': {ServiceTypeId} and percent value: {ServicePercent} does not match the minimum percent({MinPercent}) configured in Charisma. SyncQuote.SyncProduct.ServicePercentNotAllowed.MaxError     =>        There are service with 'ServiceTypeId': {ServiceTypeId} and percent value: {ServicePercent} does not match the maximum percent({MaxPercent}) configured in Charisma. SyncQuote.SyncProduct.ServiceAmountNotAllowed.MinError      =>        There are service with 'ServiceTypeId': {ServiceTypeId} and amount value: {ServiceAmount} does not match the minimum value({MinValue}) configured in Charisma. SyncQuote.SyncProduct.ServiceAmountNotAllowed.MaxError      =>        There are service with 'ServiceTypeId': {ServiceTypeId} and amount value: {ServiceAmount} does not match the maximum value({MaxValue}) configured in Charisma. SyncQuote.SyncProduct.InvalidScheduleTypeId                  =>        The provided schedule type (ScheduleTypeId: {ScheduleTypeId}) is not valid on this product configuration (ProductId: {ProductId}). SyncQuote.SyncProduct.CellParamsConfigurations              =>        Seasonal schedule configurations are not allowed on this product configuration. Configurations should not be provided in this case. SyncQuote.SyncProduct.ResidualInvalid                       =>        The residual (amount or percent) on product does not match the residual(s) from asset(s). SyncQuote.SaveProduct.SaveProductCellParams                 =>        Value [{itemValue}] for parameter [{parameter}] has type [{itemType}] and cannot be converted to type [{type}]. SyncQuote.Service.FieldNotEmpty                             =>        The {PropertyName} field cannot be empty. SyncQuote.ScheduleTypeCellConfig.FieldNotEmpty              =>        The {PropertyName} field cannot be empty. SyncQuote.ScheduleTypeCellConfig.FieldNotEmpty              =>        The {{PropertyName}} field cannot be empty for 'MonthDate' = {MonthDate}. SyncQuote.ScheduleTypeCellConfig.FieldValueWrong            =>        The Month Date({MonthDate}) field is wrong. Seasonal schedules should start on the 1st of the month! SyncQuote.ScheduleTypeCellParam.FieldNotEmpty               =>        The {{PropertyName}} field cannot be empty for 'Value' = {Value}. SyncQuote.ScheduleTypeCellParam.FieldNotEmpty               =>        The {{PropertyName}} field cannot be empty for 'ScheduleTypeCellParamId' = {ScheduleTypeCellParamId} or 'ScheduleTypeCellParamCode' = {s.ScheduleTypeCellParamCode}. StartApproval.RequestModel-FieldNotEmpty                    =>        The {PropertyName} field cannot be empty. StartApproval.RequestModel-FieldNotEmpty                    =>        The {{PropertyName}} field cannot be empty for question with 'QuestionCode' StartApproval.RequestModel-FieldNotEmpty                    =>        The {{PropertyName}} field cannot be empty for question with 'QuestionId' StartApproval.RequestModel.ArrayNotNull                     =>        The {PropertyName} field cannot be null. At least an empty array needs to be provided. StartApproval.RequestModel.InvalidPartner                   =>        The client that was selected on this quote (quote number: {quote.TransactionId}) is not properly prepared, please contact Deutsche Leasing for further information. GetApproval.RequestModel-FieldNotEmpty                      =>        The {PropertyName} field cannot be empty. GetApproval.ApprovalOperationFailed                         =>        Approval process stopped by the system, please contact Deutsche Leasing for further information. (quote number: {quote.TransactionId}) GetApproval.NoApprovalProcess                               =>        No approval yet started for quote [{quoteId}]. GenerateSepaMandate.RequestModel-FieldNotEmpty              =>        The {PropertyName} field cannot be empty. GetSepaMandate.GetDocumentNumber-ActionInterrupted          =>        The process of generate sepa mandate is interrupted by an error. QuoteManager.GetSepaMandateDocumentNumber-InvalidContract   =>        The requested contract is not generated from requested quote. StartApproval.QuoteStatusNotOK                              =>        The quote status is invalid for the operation. Valid statuses are: -1 (NOFINPRD: No finance product), -2 (INCCSTD: Incomplete customer data) and -3(PNDCSTNF: Pending customer info). StartApproval.PreselectedProductMissing                     =>        There is no preselected/selected product. StartApproval.AlreadyRunning                                =>        There is already a start approval operation in progress for this quote. General.CancelApproval.HasContracts                         =>        Cancel approval can not be executed. Contracts were already generated for this quote (QuoteId: {quoteId}). StartContract.RequestModel-FieldNotEmpty                    =>        The {PropertyName} field cannot be empty. StartContract.RequestModel-MissingField(s)                  =>        The {PropertyName} is empty or missing required field(s). StartContract.RequestModel-FieldNotEmpty                    =>        The {{PropertyName}} field cannot be empty for asset with 'ExternalId' StartContract.RequestModel-FieldNotEmpty                    =>        The {{PropertyName}} field cannot be empty for asset with 'QuoteAssetId' StartContract.RequestModel.ArrayNotNull                     =>        The {PropertyName} field cannot be null. At least an empty array needs to be provided.         QuoteManager.StartContract-NoApprovedFile                   =>        The approved file does not exist for this quote. QuoteManager.StartContract-InvalidContractState             =>        The current file state '{StateName}' (state code: '{StateCode}') is not valid. \n                                                                      Valid states are: '{StateValidated.StateName}' (state code: '{StateValidated.StateCode}'), \n                                                                      '{StateAcceptedWithAdditionalConditions.StateName}' (state code: '{StateAcceptedWithAdditionalConditions.StateCode}').\nQuoteManager.StartContract-GeneratedContract                =>        For the quote asset with ID = ({quoteAssetId}), contract has already been generated. QuoteManager.StartContract-NotGeneratedContract             =>        The contract was not generated. QuoteManager.StartContract-EmptyDetails                     =>        The approved file does not contain details.\" SetRentalDownPayment                                        =>        Rental down payment could not be set. There is no property configuration for rental down payment on this quote product. Currency.InvalidRequest                                     =>        The id '{expectedId}' is incorrect for the currency with code '{code}'.Please insert the correct id: {value}. ScoringQuestion.InvalidRequest                              =>        The id '{expectedId}' is incorrect for the question with code '{code}'.Please insert the correct id: {value}.         Partner.InvalidRequest                                      =>        The id '{expectedId}' is incorrect for the partner with code '{code}'.Please insert the correct id: {value}.          LeasingFinancialProduct.InvalidRequest                      =>        The id '{expectedId}' is incorrect for the financial product with code '{code}'.Please insert the correct id: {value}.          LeasingInterestType.InvalidRequest                          =>        The id '{expectedId}' is incorrect for the interest type with code '{code}'.Please insert the correct id: {value}.          LeasingServiceType.InvalidRequest                           =>        The id '{expectedId}' is incorrect for the service type with code '{code}'.Please insert the correct id: {value}.          Asset.InvalidRequest                                        =>        The id '{expectedId}' is incorrect for the asset with code '{code}'.Please insert the correct id: {value}.          WebAssetConditionType.InvalidRequest                        =>        The id '{expectedId}' is incorrect for the asset condition type with code '{code}'.Please insert the correct id: {value}.          WebAssetUsageType.InvalidRequest                            =>        The id '{expectedId}' is incorrect for the asset usage with code '{code}'.Please insert the correct id: {value}.          ScheduleType.InvalidRequest                                 =>        The id '{expectedId}' is incorrect for the schedule type with code '{code}'.Please insert the correct id: {value}.          ScheduleTypeCellParam.InvalidRequest                        =>        The id '{expectedId}' is incorrect for the cell param with code '{code}'.Please insert the correct id: {value}.          LeasingFinancialProductDocumentTemplate.InvalidRequest      =>        The id '{expectedId}' is incorrect for the document template with code '{code}'.Please insert the correct id: {value}.          Currency.InvalidRequest                                     =>        The code '{expectedCode}' is incorrect for the currency with id '{id}'.Please insert the correct code: {value}. ScoringQuestion.InvalidRequest                              =>        The code '{expectedCode}' is incorrect for the question with id '{id}'.Please insert the correct code: {value}.         Partner.InvalidRequest                                      =>        The code '{expectedCode}' is incorrect for the partner with id '{id}'.Please insert the correct code: {value}.          LeasingFinancialProduct.InvalidRequest                      =>        The code '{expectedCode}' is incorrect for the financial product with id '{id}'.Please insert the correct code: {value}.          LeasingInterestType.InvalidRequest                          =>        The code '{expectedCode}' is incorrect for the interest type with id '{id}'.Please insert the correct code: {value}.          LeasingServiceType.InvalidRequest                           =>        The code '{expectedCode}' is incorrect for the service type with id '{id}'.Please insert the correct code: {value}.          Asset.InvalidRequest                                        =>        The code '{expectedCode}' is incorrect for the asset with id '{id}'.Please insert the correct code: {value}.          WebAssetConditionType.InvalidRequest                        =>        The code '{expectedCode}' is incorrect for the asset condition type with id '{id}'.Please insert the correct code: {value}.          WebAssetUsageType.InvalidRequest                            =>        The code '{expectedCode}' is incorrect for the asset usage with id '{id}'.Please insert the correct code: {value}.          ScheduleType.InvalidRequest                                 =>        The code '{expectedCode}' is incorrect for the schedule type with id '{id}'.Please insert the correct code: {value}.          ScheduleTypeCellParam.InvalidRequest                        =>        The code '{expectedCode}' is incorrect for the cell param with id '{id}'.Please insert the correct code: {value}.          LeasingFinancialProductDocumentTemplate.InvalidRequest      =>        The code '{expectedCode}' is incorrect for the document template with id '{id}'.Please insert the correct code: {value}.         \n    ",
+        "required": [
+          "code",
+          "message",
+          "correlationId"
+        ],
+        "properties": {
+          "code": {
+            "description": "Response error code",
+            "nullable": false,
+            "type": "string",
+            "example": "EMPTY"
+          },
+          "message": {
+            "description": "Response error description",
+            "nullable": false,
+            "type": "string",
+            "example": "Collection is empty"
+          },
+          "correlationId": {
+            "description": "Response error correlation id. Intended to be used on investigations",
+            "nullable": false,
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "Partner": {
+        "description": "Full partner information",
+        "required": [
+          "partnerId",
+          "partnerCode"
+        ],
+        "properties": {
+          "partnerId": {
+            "description": "Partner identification number in the Charisma System",
+            "type": "integer",
+            "format": "int32",
+            "example": "1000115",
+            "nullable": false
+          },
+          "partnerCode": {
+            "description": "The code of the partner type from Charisma System.",
+            "type": "string",
+            "nullable": false
+          },
+          "partnerName": {
+            "description": "The name of the partner from Charisma System.",
+            "type": "string",
+            "nullable": false
+          },
+          "partnerTypeCode": {
+            "description": "The code of the partner type from Charisma System.",
+            "type": "string",
+            "nullable": false
+          },
+          "partnerTypeName": {
+            "description": "The name of the partner type from Charisma System.",
+            "type": "string",
+            "nullable": false
+          },
+          "remark": {
+            "description": "",
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "description": "",
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "description": "",
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "description": "",
+            "type": "string",
+            "nullable": true
+          },
+          "faxNumber": {
+            "description": "",
+            "type": "string",
+            "nullable": true
+          },
+          "nace": {
+            "description": "The main activity code for the NACE clasification.",
+            "type": "string",
+            "nullable": true
+          },
+          "creditLimit": {
+            "description": "The open amount, the unused limit from the facility frame.",
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "limitValidUntil": {
+            "description": "The finish date of the facility frame.",
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "bankName": {
+            "description": "The name of the bank from the partners default bank account.",
+            "type": "string",
+            "nullable": true
+          },
+          "bankAccount": {
+            "description": "The account from the partners default bank account.",
+            "type": "string",
+            "nullable": true
+          },
+          "rating": {
+            "description": "The rating of the partner",
+            "type": "string",
+            "example": "3",
+            "nullable": true
+          },
+          "ratingDate": {
+            "description": "The day when the rating was updated.",
+            "type": "string",
+            "format": "date",
+            "example": "2017-07-21",
+            "nullable": true
+          },
+          "partnerAddresses": {
+            "description": "List of partner addresses.",
+            "type": "array",
+            "items": {
+              "description": "Partner address information.",
+              "required": [
+                "partnerAddressId",
+                "partnerId",
+                "stairNumber",
+                "cityCode",
+                "cityName",
+                "countryCode",
+                "countryName"
+              ],
+              "properties": {
+                "partnerAddressId": {
+                  "description": "Partner address id in the Charisma System.",
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "23",
+                  "nullable": false
+                },
+                "partnerId": {
+                  "description": "Partner id in the Charisma System.",
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "1000115",
+                  "nullable": false
+                },
+                "syntheticName": {
+                  "description": "Is an identification name for the address for the corresponding partner.",
+                  "type": "string",
+                  "example": "Head Office",
+                  "nullable": true
+                },
+                "street": {
+                  "description": "Street name for the address.",
+                  "type": "string",
+                  "example": "Rindermarkt",
+                  "nullable": false
+                },
+                "streetNumber": {
+                  "description": "Street number for the address.",
+                  "type": "string",
+                  "example": "23",
+                  "nullable": true
+                },
+                "localNumber": {
+                  "description": "Local number for the address.",
+                  "type": "string",
+                  "example": "13-19",
+                  "nullable": true
+                },
+                "buildingNumber": {
+                  "description": "Building number for the address.",
+                  "type": "string",
+                  "example": "T33",
+                  "nullable": true
+                },
+                "zipCode": {
+                  "description": "Zip code of the address.",
+                  "type": "string",
+                  "example": "80469",
+                  "nullable": true
+                },
+                "stairNumber": {
+                  "description": "Stair number for the building in the address.",
+                  "type": "string",
+                  "example": "A-4010",
+                  "nullable": true
+                },
+                "cityCode": {
+                  "description": "The code of the city from Charisma System.",
+                  "type": "string",
+                  "example": "MU",
+                  "nullable": true
+                },
+                "cityName": {
+                  "description": "The name of the city from Charisma System.",
+                  "type": "string",
+                  "example": "Munchen",
+                  "nullable": true
+                },
+                "districtCode": {
+                  "description": "The code of the district from Charisma System.",
+                  "type": "string",
+                  "example": "MU",
+                  "nullable": true
+                },
+                "districtName": {
+                  "description": "The name of the district from Charisma System.",
+                  "type": "string",
+                  "example": "Munchen",
+                  "nullable": true
+                },
+                "countryCode": {
+                  "description": "The code of the country from Charisma System.",
+                  "type": "string",
+                  "example": "GE",
+                  "nullable": true
+                },
+                "countryName": {
+                  "description": "The name of the country from Charisma System.",
+                  "type": "string",
+                  "example": "Germany",
+                  "nullable": true
+                },
+                "email": {
+                  "description": "The email for the corresponding address.",
+                  "type": "string",
+                  "example": "mike@gmail.com",
+                  "nullable": true
+                },
+                "contactPerson": {
+                  "description": "The name of a contact person for the corresponding address.",
+                  "type": "string",
+                  "example": "Mike",
+                  "nullable": true
+                }
+              }
+            }
+          },
+          "partnerProperties": {
+            "description": "List of Partner properties",
+            "type": "array",
+            "items": {
+              "description": "",
+              "required": [
+                "propertyCode",
+                "propertyName"
+              ],
+              "properties": {
+                "propertyCode": {
+                  "description": "Code of the property",
+                  "type": "string",
+                  "example": "M",
+                  "nullable": true
+                },
+                "propertyName": {
+                  "description": "Name of the property",
+                  "type": "string",
+                  "example": "Gender",
+                  "nullable": false
+                },
+                "propertyValue": {
+                  "description": "Value of the property",
+                  "type": "string",
+                  "example": "Male",
+                  "nullable": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "SyncedQuote": {
+        "description": "Information about a synced quote.",
+        "required": [
+          "quoteId",
+          "transactionId",
+          "externalId",
+          "currencyId",
+          "currencyCode",
+          "partnerId",
+          "partnerName",
+          "totalAmount",
+          "assets",
+          "products"
+        ],
+        "type": "object",
+        "properties": {
+          "quoteId": {
+            "description": "Quote identification number in the Charisma System",
+            "nullable": false,
+            "type": "integer",
+            "format": "int32",
+            "example": "8403"
+          },
+          "transactionId": {
+            "description": "Quote document number in Charisma System.",
+            "nullable": false,
+            "type": "string"
+          },
+          "externalId": {
+            "description": "Quote identification number in provider environment",
+            "nullable": true,
+            "type": "string",
+            "example": "e20697d2d78f"
+          },
+          "currencyId": {
+            "description": "'The id of the currency in Charisma System.  Please see the annex *List of Property possible values*, sheet *Currency*, column *Id*. Values can also be found by calling */values/currency* (field: *Id*).'",
+            "nullable": false,
+            "type": "integer",
+            "format": "int32",
+            "example": "28"
+          },
+          "currencyCode": {
+            "description": "The code of the currency in Charisma System. Values can be found by calling */values/currency* (field: *Code*).",
+            "nullable": false,
+            "type": "string",
+            "example": "EUR"
+          },
+          "partnerId": {
+            "description": "Partner identification number in the Charisma System for the quote client.",
+            "nullable": false,
+            "type": "integer",
+            "format": "int32",
+            "example": "50412017"
+          },
+          "partnerName": {
+            "description": "Partner name in the Charisma System",
+            "nullable": true,
+            "type": "string",
+            "example": "E&F AGRO GOLD PROD SRL"
+          },
+          "totalAmount": {
+            "description": "Total amount on quote",
+            "nullable": true,
+            "type": "number",
+            "format": "float",
+            "example": "10000.00"
+          },
+          "totalAssetNetPrice": {
+            "nullable": true,
+            "type": "number",
+            "format": "float"
+          },
+          "totalDealerNetPrice": {
+            "nullable": true,
+            "type": "number",
+            "format": "float"
+          },
+          "totalAdditionalCosts": {
+            "nullable": true,
+            "type": "number",
+            "format": "float"
+          },
+          "purchaseOption": {
+            "description": "'Possible values: \n  call-option: lessee decides whether he wants to buy the asset at the end of the contract\n  put-option: lessor decides whether the lessee has to buy the asset at the end of the contract\nWill be stored in new GST property in offer, CA, contract Purchase Option.'",
+            "nullable": true,
+            "type": "string"
+          },
+          "paymentDay": {
+            "description": "Payment date of the month (SCB 1 or 15).",
+            "nullable": true,
+            "type": "string"
+          },
+          "buyRate": {
+            "description": "The buy rate.",
+            "nullable": true,
+            "type": "number",
+            "format": "float"
+          },
+          "assets": {
+            "description": "List of assets on quote",
+            "nullable": false,
+            "type": "array",
+            "items": {
+              "description": "Quote Asset",
+              "required": [
+                "quoteAssetId",
+                "assetId"
+              ],
+              "type": "object",
+              "properties": {
+                "quoteAssetId": {
+                  "description": "Asset quote id in the Charisma System",
+                  "nullable": false,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "8403"
+                },
+                "externalId": {
+                  "description": "External asset id in provider environment",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "356ef639a7eb"
+                },
+                "assetId": {
+                  "description": "Asset id in the Charisma System",
+                  "nullable": false,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "104473"
+                },
+                "assetCode": {
+                  "description": "Code of asset",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "77918"
+                },
+                "assetName": {
+                  "description": "Name of asset",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "QUANTUM 4700 S"
+                },
+                "conditionTypeId": {
+                  "description": "Condition type id of asset in Charisma System",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "int32",
+                  "example": -1
+                },
+                "conditionTypeCode": {
+                  "description": "Condition type code of asset",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "NEW"
+                },
+                "conditionTypeName": {
+                  "description": "Condition type name of asset",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "NEW"
+                },
+                "usageTypeId": {
+                  "description": "Usage type id of asset",
+                  "nullable": true,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "-1"
+                },
+                "usageTypeCode": {
+                  "description": "Usage type code of asset",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "1SHFT"
+                },
+                "usageTypeName": {
+                  "description": "Usage type name of asset",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "1 shift (8h)"
+                },
+                "environmentFriendlyTypeId": {
+                  "description": "Environment friendly type id of asset in Charisma System. Values can be found by calling */values/environmentFriendly* (field *Id*).",
+                  "nullable": true,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "-2"
+                },
+                "environmentFriendlyTypeCode": {
+                  "description": "Environment friendly type code of asset in Charisma System. Values can be found by calling */values/environmentFriendly* (field *Id*).",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "MDRT"
+                },
+                "environmentFriendlyTypeName": {
+                  "description": "Environment friendly type name of asset in Charisma System. Values can be found by calling */values/environmentFriendly* (field *Id*).",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "Moderat"
+                },
+                "supplierId": {
+                  "description": "Supplier id of asset. It is a partner id from Charisma System.",
+                  "nullable": true,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "16778131"
+                },
+                "supplierName": {
+                  "description": "Supplier name of asset",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "PROINVEST S.R.L."
+                },
+                "assetNetPrice": {
+                  "description": "",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "5000.50"
+                },
+                "dealerNetPrice": {
+                  "description": "",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "500.35"
+                },
+                "additionalCosts": {
+                  "description": "",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "250.70"
+                },
+                "assetDescription": {
+                  "description": "Description",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "QUANTUM new"
+                },
+                "manufacturingYear": {
+                  "description": "Asset manufacturing year",
+                  "nullable": true,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "2019"
+                },
+                "operatingHours": {
+                  "description": "Wear, in hours per year",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "1300.0"
+                },
+                "operatingKm": {
+                  "description": "Wear, in kilometers per year",
+                  "nullable": true,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "25070"
+                },
+                "operatingArea": {
+                  "description": "The area of operating. Geographical information where the trailer will be used",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "Europe"
+                },
+                "residualValueAmount": {
+                  "description": "Residual value on asset level",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "3190.0"
+                },
+                "parentExternalId": {
+                  "description": "ExternalId of asset parent, for which this asset is subasset",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "e20697d2d78f"
+                },
+                "vendorModelNumber": {
+                  "description": "Schmitz Bauartnummer (Vendor Model number) needs to be transfered to Charisma System in asset new GST property named Vendor model number.",
+                  "nullable": true,
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "products": {
+            "description": "Products on a quote",
+            "nullable": false,
+            "type": "array",
+            "items": {
+              "description": "Quote product",
+              "required": [
+                "quoteProductId",
+                "productId",
+                "productTypeId",
+                "scheduleTypeId",
+                "cellParamsConfigurations"
+              ],
+              "type": "object",
+              "properties": {
+                "quoteProductId": {
+                  "description": "Quote product id in the Charisma System.",
+                  "nullable": false,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "8411"
+                },
+                "productId": {
+                  "description": "Product id in the Charisma System.",
+                  "nullable": false,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "499"
+                },
+                "productCode": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "productName": {
+                  "description": "Name of product.",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "LF-EUR-Std 2.65%"
+                },
+                "productTypeId": {
+                  "description": "The id of product type",
+                  "nullable": true,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "-1656"
+                },
+                "productTypeCode": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "productTypeName": {
+                  "description": "Name of product type",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "Finance Lease"
+                },
+                "scheduleTypeId": {
+                  "description": "The id of schedule type",
+                  "nullable": false,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "50348817"
+                },
+                "duration": {
+                  "description": "The duration of product in months.",
+                  "nullable": false,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "42"
+                },
+                "periodicity": {
+                  "description": "Periodicity of product in months.",
+                  "nullable": false,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "12"
+                },
+                "startDate": {
+                  "description": "Start date",
+                  "nullable": true,
+                  "type": "string",
+                  "format": "date",
+                  "example": "2020-07-21"
+                },
+                "interestPercent": {
+                  "description": "Interest percent on product",
+                  "nullable": false,
+                  "type": "number",
+                  "format": "float",
+                  "example": "4.5000"
+                },
+                "rentalDownPaymentAmount": {
+                  "description": "Rental down payment amount is the property value with the code 'VCP_RentalADV' from the product properties.",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "1000.00"
+                },
+                "downPaymentAmount": {
+                  "description": "Down payment amount on product",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "1000.00"
+                },
+                "downPaymentPercent": {
+                  "description": "Down payment percent on product",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float"
+                },
+                "residualValueAmount": {
+                  "description": "Residual value amount on product",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "0.0"
+                },
+                "residualValuePercent": {
+                  "description": "Residual value percent on product",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float"
+                },
+                "managementFeeAmount": {
+                  "description": "Management fee amount on product",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "150.00"
+                },
+                "floatingInterestPercent": {
+                  "description": "Floating interest percent on product",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "12.50"
+                },
+                "dealerCommissionValue": {
+                  "description": "Dealer commission value on product",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "1655"
+                },
+                "addInsurance": {
+                  "description": "If an insurance is added",
+                  "nullable": true,
+                  "type": "boolean",
+                  "example": true
+                },
+                "bankMargin": {
+                  "description": "Bank margin value",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "1500"
+                },
+                "interestTypeId": {
+                  "description": "Id of interest type. Please see the dictionary values in Annex, excel file  *List of Property possible values*, sheet *Interest Type*, column  ID.",
+                  "nullable": true,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "70"
+                },
+                "interestTypeCode": {
+                  "description": "Code of interest type. Please see the dictionary values in Annex, excel file  *List of Property possible values*, sheet *Interest Type*, column  CODE.",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "FixedEUR"
+                },
+                "interestTypeName": {
+                  "description": "Name of interest type. Please see the dictionary values in Annex, excel file  *List of Property possible values*, sheet *Interest Type*, column  NAME.",
+                  "nullable": false,
+                  "type": "string",
+                  "example": "Fixed EUR"
+                },
+                "variableInterestDate": {
+                  "description": "Date of variable interest",
+                  "nullable": true,
+                  "type": "string",
+                  "format": "date",
+                  "example": "2020-07-21"
+                },
+                "services": {
+                  "description": "List of services.",
+                  "nullable": false,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "serviceTypeId",
+                      "serviceAmount"
+                    ],
+                    "properties": {
+                      "serviceTypeId": {
+                        "description": "Id of service type. Please see the Annex *List of Property possible values*, sheet *Service Type*, column *ID*. Values can also be found by calling */values/serviceType* (field *Id*).",
+                        "nullable": false,
+                        "type": "integer",
+                        "format": "int32",
+                        "example": "1"
+                      },
+                      "serviceTypeCode": {
+                        "description": "Code of service type. Please see the dictionary values in Annex, excel file  *List of Property possible values*, sheet *Service Type*, column CODE.                              ",
+                        "nullable": false,
+                        "type": "string",
+                        "example": "MAIN"
+                      },
+                      "serviceTypeName": {
+                        "description": "Name of service type. Please see the dictionary values in Annex, excel file  *List of Property possible values*, sheet *Service Type*, column NAME.",
+                        "nullable": true,
+                        "type": "string",
+                        "example": "MAIN"
+                      },
+                      "serviceAmount": {
+                        "description": "Service amount.",
+                        "nullable": true,
+                        "type": "number",
+                        "format": "float",
+                        "example": "4800"
+                      },
+                      "periodicity": {
+                        "description": "The periodicity on the service.",
+                        "nullable": true,
+                        "type": "string",
+                        "example": "6-12"
+                      },
+                      "serviceUpfrontAmount": {
+                        "description": "Upfront amount configuration.",
+                        "nullable": true,
+                        "type": "number",
+                        "format": "float",
+                        "example": "6500.75"
+                      },
+                      "financedYN": {
+                        "description": "If it is financed.",
+                        "nullable": true,
+                        "type": "boolean",
+                        "example": "false"
+                      }
+                    }
+                  }
+                },
+                "cellParamsConfigurations": {
+                  "description": "List of schedule cell configuration",
+                  "nullable": false,
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "$ref": "#/components/schemas/ScheduleTypeCellConfig"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "GetTokenRequest": {
+        "type": "object",
+        "required": [
+          "grant_type",
+          "client_id",
+          "client_secret"
+        ],
+        "properties": {
+          "grant_type": {
+            "description": "Supported grant type is *client_credentials*.",
+            "nullable": false,
+            "type": "string",
+            "example": "client_credentials"
+          },
+          "client_id": {
+            "nullable": false,
+            "type": "string"
+          },
+          "client_secret": {
+            "type": "string",
+            "nullable": false
+          }
+        }
+      },
+      "GetTokenResponse": {
+        "type": "object",
+        "required": [
+          "access_token",
+          "token_type",
+          "expires_in"
+        ],
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "nullable": false
+          },
+          "token_type": {
+            "type": "string",
+            "nullable": false
+          },
+          "expires_in": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": false
+          }
+        }
+      },
+      "PingRequest": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": false,
+            "example": "John"
+          }
+        }
+      },
+      "PingResponse": {
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "nullable": false,
+            "example": "Hello John! Current application version is x.x.x.x."
+          }
+        }
+      },
+      "GetValuesResponse": {
+        "type": "array",
+        "items": {
+          "description": "Different properties are returned depending on the request param that is provided.",
+          "nullable": false,
+          "type": "object"
+        }
+      },
+      "GetPartnersRequest": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "nullable": false,
+          "required": [
+            "filterCode",
+            "filterValue"
+          ],
+          "properties": {
+            "filterCode": {
+              "description": "'Partner filter code. Allowed values can be found in the annex *Lists of property possible values*, sheet *ZootPartnerSearchConfigData*. Values can also be found by calling */values/zootPartnerSearchConfig* (field: *Code*).'",
+              "nullable": false,
+              "type": "string",
+              "example": "COMP_NAME"
+            },
+            "filterValue": {
+              "description": "Filter value",
+              "nullable": false,
+              "type": "string",
+              "example": "GOLD"
+            }
+          }
+        },
+        "example": "[{\"filterCode\":\"COMP_NAME\",\"filterValue\":\"gold\"},{\"filterCode\":\"CITY\",\"filterValue\":\"london\"}]"
+      },
+      "GetPartnersResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "nullable": false,
+          "required": [
+            "origin",
+            "name",
+            "taxId"
+          ],
+          "properties": {
+            "origin": {
+              "description": "The source system. The partner information can come from Charisma or Credit Bureau. If origin field contains *Charisma* then *partnerId* field is a required field, otherwise the *bureauId* field is required.",
+              "nullable": true,
+              "type": "string",
+              "example": "KEYSFIN"
+            },
+            "bureauId": {
+              "description": "The identification number of the Partner from Credit Bureau.",
+              "nullable": true,
+              "type": "string",
+              "example": "10"
+            },
+            "partnerId": {
+              "description": "The identification field of the Partner from Charisma System. The value for this field will not be provided if the partner information was retrieved directly from a credit bureau. In order to have this information provided an api call needs to be done with the method */partner*, provideing the *bureauId* and the *origin* values.",
+              "nullable": true,
+              "type": "number",
+              "format": "int32",
+              "example": "270"
+            },
+            "address": {
+              "description": "The address of the partner.",
+              "nullable": true,
+              "type": "string",
+              "example": "94  Guild Street, London, N15 0HX"
+            },
+            "city": {
+              "description": "The city of the partner.",
+              "nullable": true,
+              "type": "string",
+              "example": "London"
+            },
+            "name": {
+              "description": "Partner name extracted from Charisma or Credit Bureau.",
+              "nullable": true,
+              "type": "string",
+              "example": "Deutsche Leasing London"
+            },
+            "taxId": {
+              "description": "Tax id taken from partner.",
+              "nullable": true,
+              "type": "string",
+              "example": "23"
+            },
+            "zip": {
+              "description": "ZIP number taken from partner.",
+              "nullable": true,
+              "type": "string",
+              "example": "23486"
+            },
+            "state": {
+              "description": "State field from partner address.",
+              "nullable": true,
+              "type": "string"
+            },
+            "phone": {
+              "description": "Partner phone number.",
+              "nullable": true,
+              "type": "string",
+              "example": "+44 20 7656 0977"
+            }
+          }
+        }
+      },
+      "GetAssetTypesResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/AssetType"
+        }
+      },
+      "SyncQuoteRequest": {
+        "description": "Quote content",
+        "type": "object",
+        "required": [
+          "externalId",
+          "assets",
+          "products"
+        ],
+        "properties": {
+          "quoteId": {
+            "description": "The identification field of the quote from Charisma System. If this field is present then the coresponding quote will be updated, otherwise a new quote will be created and the new *quoteId* will be provided to the external system.",
+            "nullable": true,
+            "type": "integer",
+            "format": "int32",
+            "example": "1001"
+          },
+          "currencyId": {
+            "description": "'CurrencyId is required when CurrencyCode is NULL. The id of the currency in Charisma System.  Please see the annex *List of Property possible values*, sheet *Currency*, column *Id*. Values can also be found by calling */values/currency* (field: *Id*).'",
+            "nullable": true,
+            "type": "integer",
+            "format": "int32",
+            "example": "28"
+          },
+          "currencyCode": {
+            "description": "'CurrencyCode is required when CurrencyId is NULL. The code of the currency in Charisma System.  Please see the annex *List of Property possible values*, sheet *Currency*, column *Code*. Values can also be found by calling */values/currency* (field: *Code*).'",
+            "nullable": true,
+            "type": "string",
+            "example": "EUR"
+          },
+          "partnerId": {
+            "description": "PartnerId is required when PartnerCode is NULL. The id of the client partner from Charisma System.",
+            "nullable": true,
+            "type": "integer",
+            "format": "int32",
+            "example": "50423658"
+          },
+          "partnerCode": {
+            "description": "PartnerCode is required when PartnerId is NULL. The code of the client partner from Charisma System.",
+            "nullable": true,
+            "type": "string",
+            "example": "1000115"
+          },
+          "externalId": {
+            "description": "The identification field of the quote from External System.",
+            "nullable": false,
+            "type": "string",
+            "example": "9001"
+          },
+          "externalSalesman": {
+            "description": "Based on the last workshop meetings it was reached the conclusion that the vendor can’t be saved as a partner automatically. In this case, it will be saved in the contract property *External Salesman*.",
+            "type": "string",
+            "nullable": true
+          },
+          "vendorRegionalBusinessManager": {
+            "description": "Based on the last workshop meetings it was reached the conclusion that the vendor can’t be saved as a partner automatically. In this case, it will be saved in the contract property *Vendor regional business manager*.",
+            "type": "string",
+            "nullable": true
+          },
+          "vendorFinanceContact": {
+            "description": "Based on the last workshop meetings it was reached the conclusion that the vendor can’t be saved as a partner automatically. In this case, it will be saved in the contract property *Vendor finance contact*.",
+            "type": "string",
+            "nullable": true
+          },
+          "purchaseOption": {
+            "description": "'Possible values: \n  call-option: lessee decides whether he wants to buy the asset at the end of the contract\n  put-option: lessor decides whether the lessee has to buy the asset at the end of the contract\nWill be stored in new GST property in offer, CA, contract Purchase Option.'",
+            "type": "string",
+            "nullable": true
+          },
+          "paymentDay": {
+            "description": "Payment day of the month (SCB 1 or 15).",
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "assets": {
+            "description": "This needs to be at least an empty array.",
+            "nullable": false,
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "assetNetPrice",
+                "externalId"
+              ],
+              "properties": {
+                "quoteAssetId": {
+                  "description": "The identification field of the quote asset from Charisma System. If this field is present then the coresponding quote asset will be updated, otherwise a new quote asset will be created (and added on the quote) and the new *quoteAssetId* will be provided to the external system.",
+                  "type": "integer",
+                  "nullable": true,
+                  "format": "int32",
+                  "example": "10011"
+                },
+                "externalId": {
+                  "description": "The identification field of the quote asset from External System.",
+                  "type": "string",
+                  "nullable": false,
+                  "example": "90011"
+                },
+                "assetId": {
+                  "description": "AssetId is required when AssetCode is NULL. The value of the *ModelId* field from Assets sheet (List of property possible values.xlsx). Values can also be found by calling */assetTypes?currencyId=${currency id from the quote}* (field *AssetId*) or by calling */quotes/${quote id from Charisma System}/assetTypes* (field *AssetId*).",
+                  "nullable": true,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "10011"
+                },
+                "assetCode": {
+                  "description": "AssetCode is required when AssetId is NULL. The code of the asset from Charisma system. Please see the dictionary values in Annex, excel file *List of Property possible values*,  sheet *Asset*, column  *Model Code*. This is the id of the model in AME system.",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "68527"
+                },
+                "assetNetPrice": {
+                  "description": "Asset net price",
+                  "nullable": false,
+                  "type": "number",
+                  "format": "float",
+                  "example": "5000.50"
+                },
+                "dealerNetPrice": {
+                  "description": "Asset net price from dealer.",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "500.35"
+                },
+                "additionalCosts": {
+                  "description": "Asset additional costs.",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "250.70"
+                },
+                "conditionTypeId": {
+                  "description": "Condition type id of asset in Charisma System. Values can be found by calling */values/conditionType* (field *Id*).",
+                  "nullable": true,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "-1"
+                },
+                "conditionTypeCode": {
+                  "description": "Condition type code of asset in Charisma System. Values can be found by calling */values/conditionType* (field *Code*).",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "NEW"
+                },
+                "usageTypeId": {
+                  "description": "Usage type id of asset in Charisma System. Values can be found by calling */values/usageType* (field *Id*).",
+                  "nullable": true,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "-1"
+                },
+                "usageTypeCode": {
+                  "description": "Usage type code of asset in Charisma System. Values can be found by calling */values/usageType* (field *Code*).",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "1SHFT"
+                },
+                "environmentFriendlyTypeId": {
+                  "description": "Environment friendly type id of asset in Charisma System. Values can be found by calling */values/environmentFriendly* (field *Id*).",
+                  "nullable": true,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "-2"
+                },
+                "supplierId": {
+                  "description": "The id of the supplier partner from Charisma System.",
+                  "nullable": true,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "16778131"
+                },
+                "assetDescription": {
+                  "description": "Description",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "QUANTUM new"
+                },
+                "manufacturingYear": {
+                  "description": "Asset manufacturing year",
+                  "nullable": false,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "2019"
+                },
+                "operatingHours": {
+                  "description": "Wear, in hours per year",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "1300.0"
+                },
+                "operatingKm": {
+                  "description": "Wear, in kilometers per year",
+                  "nullable": true,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "25070"
+                },
+                "operatingArea": {
+                  "description": "The area of operating. Geographical information where the trailer will be used",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "Europe"
+                },
+                "residualValueAmount": {
+                  "description": "Residual value on asset level",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "3190.0"
+                },
+                "parentExternalId": {
+                  "description": "ExternalId of asset parent, for which this asset is a subasset.",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "e20697d2d78f"
+                },
+                "vendorModelNumber": {
+                  "description": "Schmitz Bauartnummer (Vendor Model number) needs to be transfered to Charisma System in asset new GST property named Vendor model number.",
+                  "nullable": true,
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "products": {
+            "description": "This needs to be at least an empty array.",
+            "nullable": false,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "residualValueAmount",
+                "periodicity",
+                "duration",
+                "interestPercent",
+                "startDate",
+                "services",
+                "cellParamsConfigurations"
+              ],
+              "properties": {
+                "quoteProductId": {
+                  "description": "The identification field of the quote product from Charisma System. This needs to be provided if it is available in the external system.",
+                  "nullable": true,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "100111"
+                },
+                "productId": {
+                  "description": "ProductId is required when ProductCode is NULL. Product id from Charisma System. Please see the dictionary values in Annex, excel file List of Property possible values, sheet Type of Financial product, column ID",
+                  "nullable": true,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "10"
+                },
+                "productCode": {
+                  "description": "ProductCode is required when ProductId is NULL. Product code from Charisma System. Please see the dictionary values in Annex, excel file List of Property possible values, sheet Type of Financial product, column ProductCode",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "10"
+                },
+                "scheduleTypeId": {
+                  "description": "'ScheduleTypeId is required when ScheduleTypeCode is NULL. Id of the schedule type from Charisma System. Values can be found by calling */values/scheduleType* (field *Id*).'",
+                  "nullable": true,
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "scheduleTypeCode": {
+                  "description": "'ScheduleTypeCode is required when ScheduleTypeId is NULL. Code of the schedule type from Charisma System. Values can be found by calling */values/scheduleType* (field *Id*).'",
+                  "nullable": true,
+                  "type": "string"
+                },
+                "rentalDownPaymentAmount": {
+                  "description": "Rental down payment amount has value, down payment amount not used. Rental down payment amount on product properties(value from property with code 'VCP_RentalADV').",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "600"
+                },
+                "downPaymentAmount": {
+                  "description": "Down payment amount has value, rental down payment amount not used. Down payment amount. Can not be provided in the same time with *downPaymentPercent* field.",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "600"
+                },
+                "downPaymentPercent": {
+                  "description": "Down payment percent. Can not be provided in the same time with *downPaymentAmount* field.",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float"
+                },
+                "residualValueAmount": {
+                  "description": "Residual amount. Can not be provided in the same time with *residualValuePercent* field.",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "1000"
+                },
+                "residualValuePercent": {
+                  "description": "Residual percent. Can not be provided in the same time with *residualValueAmount* field.",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float"
+                },
+                "managementFeeAmount": {
+                  "description": "Management fee amount.",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float"
+                },
+                "periodicity": {
+                  "description": "Periodicity.",
+                  "nullable": false,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "12"
+                },
+                "duration": {
+                  "description": "The filled duration for the product.",
+                  "type": "integer",
+                  "nullable": false,
+                  "format": "int32",
+                  "example": "48"
+                },
+                "interestPercent": {
+                  "description": "Interest percent.",
+                  "nullable": false,
+                  "type": "number",
+                  "format": "float",
+                  "example": "11.25"
+                },
+                "startDate": {
+                  "description": "Start date",
+                  "nullable": false,
+                  "type": "string",
+                  "format": "date",
+                  "example": "2020-07-21"
+                },
+                "dealerCommissionValue": {
+                  "description": "Value of dealer commission.",
+                  "nullable": true,
+                  "type": "number",
+                  "format": "float",
+                  "example": "134.70"
+                },
+                "addInsurance": {
+                  "description": "If an insurance is added",
+                  "nullable": true,
+                  "type": "boolean",
+                  "example": true
+                },
+                "interestTypeId": {
+                  "description": "The interst type id",
+                  "nullable": true,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "70"
+                },
+                "interestTypeCode": {
+                  "description": "The interst type code",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "FixedEUR"
+                },
+                "variableInterestDate": {
+                  "description": "Date of variable interest",
+                  "nullable": true,
+                  "type": "string",
+                  "format": "date",
+                  "example": "2020-07-21"
+                },
+                "services": {
+                  "description": "List of services.",
+                  "nullable": false,
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "serviceAmount"
+                    ],
+                    "properties": {
+                      "serviceTypeId": {
+                        "description": "ServiceTypeId is required when ServiceTypeCode is NULL. Id of service type. Please see the Annex *List of Property possible values*, sheet *Service Type*, column *ID*. Values can also be found by calling */values/serviceType* (field *Id*).",
+                        "nullable": true,
+                        "type": "integer",
+                        "format": "int32",
+                        "example": "1"
+                      },
+                      "serviceTypeCode": {
+                        "description": "ServiceTypeCode is required when ServiceTypeId is NULL. Code of service type. Please see the Annex *List of Property possible values*, sheet *Service Type*, column *Code*. Values can also be found by calling */values/serviceType* (field *Code*).",
+                        "nullable": true,
+                        "type": "string",
+                        "example": "MENT"
+                      },
+                      "serviceAmount": {
+                        "description": "Service amount.",
+                        "nullable": false,
+                        "type": "number",
+                        "format": "float",
+                        "example": "4800"
+                      },
+                      "periodicity": {
+                        "description": "The periodicity on the service.",
+                        "nullable": true,
+                        "type": "string",
+                        "example": "6-12"
+                      },
+                      "serviceUpfrontAmount": {
+                        "description": "Upfront amount configuration.",
+                        "nullable": true,
+                        "type": "number",
+                        "format": "float",
+                        "example": "6500.75"
+                      },
+                      "financedYN": {
+                        "description": "If it is financed.",
+                        "nullable": true,
+                        "type": "boolean",
+                        "example": "false"
+                      }
+                    }
+                  }
+                },
+                "cellParamsConfigurations": {
+                  "description": "List of schedule cell configuration",
+                  "nullable": false,
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "$ref": "#/components/schemas/ScheduleTypeCellConfig"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ScheduleTypeCellConfig": {
+        "type": "object",
+        "properties": {
+          "monthDate": {
+            "description": "The first date of the month for which the configurations are done. Used to identify the right month (cell or line) in the schedule.",
+            "nullable": false,
+            "type": "string",
+            "format": "date",
+            "example": "2020-07-21"
+          },
+          "params": {
+            "description": "List of params for the month that is configured.",
+            "nullable": false,
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/ScheduleTypeCellParam"
+            }
+          }
+        }
+      },
+      "ScheduleTypeCellParam": {
+        "type": "object",
+        "properties": {
+          "scheduleTypeCellParamId": {
+            "description": "'ScheduleTypeCellParamId is required when ScheduleTypeCellParamCode is NULL. The Id of the parameter for which we are setting a value.  The list of available params depend on the selected schedule type and are preconfigured in Charisma System.  These are provided by the *Get quote products definitions operation*.'",
+            "nullable": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          "scheduleTypeCellParamCode": {
+            "description": "'ScheduleTypeCellParamCode is required when ScheduleTypeCellParamId is NULL. The Code of the parameter for which we are setting a value.  The list of available params depend on the selected schedule type and are preconfigured in Charisma System.  These are provided by the *Get quote products definitions operation*.'",
+            "nullable": true,
+            "type": "string"
+          },
+          "value": {
+            "description": "The value that we are setting for that parameter. Here the type of this value is dynamic, depending on the param type. Can be any type - string, number, boolean, date.",
+            "nullable": false,
+            "type": "object"
+          }
+        }
+      },
+      "GetQuoteAssetTypesResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/AssetType"
+        }
+      },
+      "GetQuoteProductsDefinitionsResponse": {
+        "type": "array",
+        "items": {
+          "description": "This object contains product description fields.",
+          "required": [
+            "quoteProductId",
+            "productId",
+            "productTypeId"
+          ],
+          "properties": {
+            "quoteProductId": {
+              "description": "Product id on quote.",
+              "type": "integer",
+              "format": "int32",
+              "example": "8411",
+              "nullable": false
+            },
+            "productTypeId": {
+              "description": "Product type id in Charisma System. Please see the dictionary values in Annex, excel file List of Property possible values, sheet Type of Financial product, column ID",
+              "type": "integer",
+              "format": "int32",
+              "example": "7",
+              "nullable": true
+            },
+            "productTypeCode": {
+              "description": "Product type name in Charisma System.",
+              "type": "string",
+              "example": "LS_FP_FL",
+              "nullable": true
+            },
+            "productTypeName": {
+              "description": "Product type name in VCP. Please see the dictionary values in Annex, excel file List of Property possible values, sheet Type of Financial product, column Name",
+              "type": "string",
+              "example": "Finance Lease",
+              "nullable": true
+            },
+            "productId": {
+              "description": "Product Id in VCP.",
+              "type": "integer",
+              "format": "int32",
+              "example": "12",
+              "nullable": false
+            },
+            "productCode": {
+              "description": "Product code",
+              "type": "string",
+              "example": "LF-EUR-Std 2.65%",
+              "nullable": false
+            },
+            "productName": {
+              "description": "Product name in VCP",
+              "type": "string",
+              "example": "LF-EUR-Std 2.65%",
+              "nullable": false
+            },
+            "interestMinPercent": {
+              "description": "The minimum percentage of interest for the documents  (offer, credit, application, contract) with the corresponding product. ",
+              "type": "number",
+              "format": "float",
+              "example": "11.25",
+              "nullable": true
+            },
+            "interestMaxPercent": {
+              "description": "The maximum percentage of interest for the documents  (offer, credit application, contract) with the corresponding product. ",
+              "type": "number",
+              "format": "float",
+              "example": "15.25",
+              "nullable": true
+            },
+            "productDocumentTemplates": {
+              "description": "The list of document templates for the corresponding product.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "Id of the product document template",
+                    "type": "integer",
+                    "format": "int32",
+                    "example": "50",
+                    "nullable": false
+                  },
+                  "contextId": {
+                    "description": "Id of the context",
+                    "type": "integer",
+                    "format": "int32",
+                    "example": "1",
+                    "nullable": false
+                  },
+                  "contextCode": {
+                    "description": "Code of the context",
+                    "type": "string",
+                    "example": "VCPS4",
+                    "nullable": false
+                  },
+                  "contextName": {
+                    "description": "Name of the context",
+                    "type": "string",
+                    "example": "VCPS4",
+                    "nullable": false
+                  },
+                  "requiredDocTypeId": {
+                    "description": "Id of the required document type",
+                    "type": "integer",
+                    "format": "int32",
+                    "example": "1",
+                    "nullable": true
+                  },
+                  "requiredDocName": {
+                    "description": "Name of the required document",
+                    "type": "string",
+                    "example": "Copy of Identity Card for representatives",
+                    "nullable": true
+                  },
+                  "requiredDocTypeHasTemplate": {
+                    "description": "States if there is a template file that can be downloaded for the required document.",
+                    "type": "boolean",
+                    "example": true,
+                    "nullable": false
+                  },
+                  "documentTemplateId": {
+                    "description": "Id of document template",
+                    "type": "integer",
+                    "format": "int32",
+                    "example": "1",
+                    "nullable": true
+                  },
+                  "documentTemplateName": {
+                    "description": "Name of document template",
+                    "type": "string",
+                    "example": "Generic contract",
+                    "nullable": true
+                  },
+                  "caption": {
+                    "description": "Caption field",
+                    "type": "string",
+                    "example": "Credit contract",
+                    "nullable": true
+                  },
+                  "isMandatory": {
+                    "description": "If it is mandatory",
+                    "type": "boolean",
+                    "example": "true",
+                    "nullable": true
+                  }
+                }
+              }
+            },
+            "useRentalDownPayment": {
+              "description": "There is a property with the code 'VCP_RentalADV' in the product properties.",
+              "type": "boolean",
+              "example": "false",
+              "nullable": false
+            },
+            "downPaymentMinPercent": {
+              "description": "Minimum down payment percent.",
+              "type": "number",
+              "format": "float",
+              "example": "10",
+              "nullable": true
+            },
+            "downPaymentMaxPercent": {
+              "description": "Maximum down payment percent.",
+              "type": "number",
+              "format": "float",
+              "example": "50",
+              "nullable": true
+            },
+            "downPaymentMinAmount": {
+              "description": "Minimum down payment amount.",
+              "type": "number",
+              "format": "float",
+              "example": "600",
+              "nullable": true
+            },
+            "downPaymentMaxAmount": {
+              "description": "Maximum down payment amount.",
+              "type": "number",
+              "format": "float",
+              "example": "3000",
+              "nullable": true
+            },
+            "subsidyValue": {
+              "description": "",
+              "type": "number",
+              "format": "float",
+              "nullable": true
+            },
+            "residualValueMinPercent": {
+              "description": "Minimum residual percent.",
+              "type": "number",
+              "format": "float",
+              "example": "0.0",
+              "nullable": true
+            },
+            "residualValueMaxPercent": {
+              "description": "Maximum residual percent.",
+              "type": "number",
+              "format": "float",
+              "example": "10.5",
+              "nullable": true
+            },
+            "periodicities": {
+              "description": "List of possible periodicities.",
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "example": "[1, 3, 12]"
+            },
+            "durations": {
+              "description": "List of possible durations.",
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "example": "[1, 2, 3, 6, 12, 24]"
+            },
+            "scheduleTypes": {
+              "description": "The list of active schedule types for the correspondig product",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "scheduleTypeId"
+                ],
+                "properties": {
+                  "scheduleTypeId": {
+                    "description": "Id of the schedule type. Please see the dictionary values in Annex, excel file  *List of Property possible values*, sheet *Schedule Type product*, column ID.",
+                    "type": "integer",
+                    "format": "int32",
+                    "example": "348819",
+                    "nullable": false
+                  },
+                  "scheduleTypeName": {
+                    "description": "Name of the schedule type. Please see the dictionary values in Annex, excel file  *List of Property possible values*, sheet *Schedule Type product*, column NAME.",
+                    "type": "string",
+                    "example": "DL - Equal principal",
+                    "nullable": false
+                  },
+                  "isConfigurable": {
+                    "description": "If it is configurable",
+                    "type": "boolean",
+                    "example": "true",
+                    "nullable": false
+                  },
+                  "scheduleTypeCellParams": {
+                    "description": "The list of the schedule type cell parameters for the corresponding schedule type",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "scheduleTypeCellParamId"
+                      ],
+                      "properties": {
+                        "scheduleTypeCellParamId": {
+                          "description": "Id of the schedule type cell parameter",
+                          "type": "integer",
+                          "format": "int32",
+                          "example": "1",
+                          "nullable": true
+                        },
+                        "cellParamTypeId": {
+                          "description": "Id of cell parameter",
+                          "type": "integer",
+                          "format": "int32",
+                          "example": "-1724",
+                          "nullable": true
+                        },
+                        "cellParamTypeName": {
+                          "description": "Name of the cell parameter type",
+                          "type": "string",
+                          "example": "Boolean",
+                          "nullable": true
+                        },
+                        "cellParamName": {
+                          "description": "Name of cell parameter",
+                          "type": "string",
+                          "example": "GracePeriod",
+                          "nullable": true
+                        },
+                        "cellParamDisplayName": {
+                          "description": "Displayed name of the cell parameter",
+                          "type": "string",
+                          "example": "Gr. Cap",
+                          "nullable": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "interestTypeId": {
+              "description": "Id of interest type. Please see the dictionary values in Annex, excel file  *List of Property possible values*, sheet *Interest Type*, column  ID.",
+              "type": "integer",
+              "format": "int32",
+              "example": "70",
+              "nullable": true
+            },
+            "interestTypeCode": {
+              "description": "Code of interest type. Please see the dictionary values in Annex, excel file  *List of Property possible values*, sheet *Interest Type*, column  CODE.",
+              "type": "string",
+              "example": "FixedEUR",
+              "nullable": true
+            },
+            "interestTypeName": {
+              "type": "string",
+              "description": "Name of interest type. Please see the dictionary values in Annex, excel file  *List of Property possible values*, sheet *Interest Type*, column  NAME.",
+              "example": "Fixed EUR",
+              "nullable": true
+            },
+            "services": {
+              "description": "List of product services.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "serviceTypeId"
+                ],
+                "properties": {
+                  "serviceTypeId": {
+                    "description": "Id of service type. Please see the Annex *List of Property possible values*, sheet *Service Type*, column *ID*. Values can also be found by calling */values/serviceType* (field *Id*).",
+                    "type": "integer",
+                    "format": "int32",
+                    "example": "1",
+                    "nullable": false
+                  },
+                  "serviceTypeCode": {
+                    "description": "Code of service type. Please see the dictionary values in Annex, excel file  *List of Property possible values*, sheet *Service Type*, column CODE.",
+                    "type": "string",
+                    "example": "MAIN",
+                    "nullable": false
+                  },
+                  "serviceTypeName": {
+                    "description": "Name of service type. Please see the dictionary values in Annex, excel file  *List of Property possible values*, sheet *Service Type*, column NAME.",
+                    "type": "string",
+                    "example": "MAIN",
+                    "nullable": false
+                  },
+                  "periodicity": {
+                    "type": "integer",
+                    "example": 6,
+                    "nullable": true
+                  },
+                  "financedYN": {
+                    "type": "boolean",
+                    "example": false,
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "GetQuoteScoringQuestionsResponse": {
+        "type": "array",
+        "items": {
+          "description": "Each object from the list of questions.",
+          "type": "object",
+          "required": [
+            "questionId",
+            "questionText"
+          ],
+          "properties": {
+            "questionId": {
+              "description": "Id of the question.",
+              "type": "integer",
+              "format": "int32",
+              "example": 5,
+              "nullable": false
+            },
+            "questionCode": {
+              "description": "Code of the question.",
+              "type": "string",
+              "example": "Depreciation",
+              "nullable": true
+            },
+            "questionText": {
+              "description": "Question.",
+              "type": "string",
+              "example": "Depreciation (local currency)",
+              "nullable": false
+            },
+            "questionDescription": {
+              "description": "General description for question.",
+              "type": "string",
+              "example": "Depreciation (local currency)",
+              "nullable": true
+            },
+            "variableTypeId": {
+              "description": "Here is set the type of the response. (e.g. open answer, a drop list of options). In this column is the Identification Number of the variable type.  ",
+              "type": "integer",
+              "format": "int32",
+              "example": -1726,
+              "nullable": true
+            },
+            "variableTypeCode": {
+              "description": "Code of the variable type.",
+              "type": "string",
+              "example": "A",
+              "nullable": true
+            },
+            "variableTypeName": {
+              "description": "Name of the variable type.",
+              "type": "string",
+              "example": "Amount",
+              "nullable": true
+            },
+            "options": {
+              "description": "List of options for the questions that don’t have free text answers.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "optionValueId",
+                  "optionId"
+                ],
+                "properties": {
+                  "optionValueId": {
+                    "description": "Id of the option value.",
+                    "type": "integer",
+                    "format": "int32",
+                    "example": 25,
+                    "nullable": false
+                  },
+                  "optionValueCode": {
+                    "description": "Code of the option value.",
+                    "type": "string",
+                    "example": "More than 8 Years",
+                    "nullable": true
+                  },
+                  "optionValueName": {
+                    "description": "Name of the option value.",
+                    "type": "string",
+                    "example": "More than 8 Years",
+                    "nullable": true
+                  },
+                  "optionId": {
+                    "description": "Id of the option.",
+                    "type": "integer",
+                    "format": "int32",
+                    "example": 5,
+                    "nullable": false
+                  },
+                  "fromValue": {
+                    "description": "Lower limit for the response of the question.",
+                    "type": "number",
+                    "format": "float",
+                    "example": 4,
+                    "nullable": true
+                  },
+                  "toValue": {
+                    "description": "Upper limit for the response of the question.",
+                    "type": "number",
+                    "format": "float",
+                    "example": 4,
+                    "nullable": true
+                  },
+                  "orderNo": {
+                    "description": "The order of the option in the answer list.",
+                    "type": "integer",
+                    "format": "int32",
+                    "example": 4,
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "StartApprovalRequest": {
+        "type": "object",
+        "required": [
+          "quoteId",
+          "indicative",
+          "scoringQuestions"
+        ],
+        "properties": {
+          "indicative": {
+            "description": "It states if the approval is final or just indicative.",
+            "nullable": false,
+            "type": "boolean",
+            "example": false
+          },
+          "scoringQuestions": {
+            "type": "array",
+            "nullable": false,
+            "items": {
+              "type": "object",
+              "required": [
+                "questionId",
+                "questionCode",
+                "questionAnswer"
+              ],
+              "properties": {
+                "questionId": {
+                  "description": "Identification number for object. If *questionId* is not provided then *questionCode* becomes a mandatory field and can not be null.",
+                  "nullable": false,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "9"
+                },
+                "questionCode": {
+                  "description": "Question code for object.  If *questionCode* is not provided then *questionId* becomes a mandatory field and can not be null.",
+                  "nullable": false,
+                  "type": "string",
+                  "example": "Depreciation"
+                },
+                "questionAnswer": {
+                  "description": "Question answer for object.",
+                  "nullable": false,
+                  "type": "string",
+                  "example": "Depreciation"
+                }
+              }
+            }
+          }
+        }
+      },
+      "StartApprovalResponse": {
+        "type": "object",
+        "properties": {
+          "scoringId": {
+            "description": "The identification number of the approval calculation process.",
+            "type": "number",
+            "format": "int32",
+            "example": "12",
+            "nullable": false
+          },
+          "status": {
+            "description": "The status of the approval process. Can be: WorkInProgress, Done.",
+            "type": "string",
+            "example": "Pending",
+            "nullable": false
+          }
+        }
+      },
+      "GetApprovalResponse": {
+        "type": "object",
+        "required": [
+          "quoteStatusId",
+          "quoteStatusCode",
+          "approval"
+        ],
+        "properties": {
+          "quoteStatusId": {
+            "description": "Identification number for quote status.",
+            "nullable": false,
+            "type": "number",
+            "format": "int32"
+          },
+          "quoteStatusCode": {
+            "description": "Code for quote status.",
+            "nullable": false,
+            "type": "string"
+          },
+          "quoteStatusName": {
+            "description": "Name for quote status.",
+            "nullable": true,
+            "type": "string"
+          },
+          "approval": {
+            "description": "Approval object.",
+            "type": "object",
+            "required": [
+              "scoringId",
+              "status"
+            ],
+            "properties": {
+              "scoringId": {
+                "description": "The identification number of the approval calculation process.",
+                "nullable": false,
+                "type": "number",
+                "format": "int32",
+                "example": "12"
+              },
+              "status": {
+                "description": "The status of the approval process. Can be: WorkInProgress, Done.",
+                "nullable": false,
+                "type": "string"
+              },
+              "decision": {
+                "description": "Scoring decision taken in the method start approval (green, yellow, blue, red).  If the approval process is not finished this will not be available.",
+                "nullable": true,
+                "type": "string"
+              },
+              "conditions": {
+                "description": "If the taken decision is yellow (approved with conditions), then should be returned the conditions. If the approval process is not finished this will not be available.",
+                "nullable": true,
+                "type": "string"
+              },
+              "validDate": {
+                "description": "If a decision is taken then the date of the set decision must be returned. If the approval process is not finished this will not be available.",
+                "nullable": true,
+                "type": "string",
+                "format": "date",
+                "example": "2019-09-17"
+              },
+              "reasons": {
+                "description": "The reasons of the decision must be returned. If the approval process is not finished this will not be available.",
+                "nullable": true,
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "CancelApprovalResponse": {
+        "type": "object",
+        "required": [
+          "quoteId"
+        ],
+        "properties": {
+          "quoteId": {
+            "type": "integer",
+            "format": "int32",
+            "example": 8385,
+            "nullable": false
+          }
+        }
+      },
+      "StartContractRequest": {
+        "type": "object",
+        "required": [
+          "activationDate",
+          "documentStartDate",
+          "assets"
+        ],
+        "properties": {
+          "activationDate": {
+            "description": "The date of the activation of the document.",
+            "nullable": false,
+            "type": "string",
+            "format": "date",
+            "example": "2019-09-10"
+          },
+          "documentStartDate": {
+            "description": "The start date of the document.",
+            "nullable": false,
+            "type": "string",
+            "format": "date",
+            "example": "2019-09-11"
+          },
+          "invoiceNumber": {
+            "description": "Before the activation the supplier payment must be done. The external  system’s number of the payment must be saved in VCP.  ",
+            "nullable": true,
+            "type": "string",
+            "example": "69458"
+          },
+          "additionalAddress": {
+            "description": "All the details for an additional address for the contract’s client.",
+            "nullable": true,
+            "type": "string",
+            "example": "18  Guild Street, London, H8 5B"
+          },
+          "assets": {
+            "nullable": false,
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "quoteAssetId",
+                "externalId",
+                "serialNumber"
+              ],
+              "properties": {
+                "quoteAssetId": {
+                  "description": "The identification number for asset.",
+                  "nullable": false,
+                  "type": "integer",
+                  "format": "int32",
+                  "example": "354782"
+                },
+                "externalId": {
+                  "description": "The identification number of the asset in the external system.",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "98745"
+                },
+                "serialNumber": {
+                  "description": "The serial number or chassis number of the asset. Will be populated when  the document becomes contract.  ",
+                  "nullable": true,
+                  "type": "string",
+                  "example": "248AB65"
+                },
+                "assetPlate": {
+                  "description": "The asset plate. ",
+                  "nullable": true,
+                  "type": "string"
+                },
+                "deliveryDate": {
+                  "type": "string",
+                  "nullable": true,
+                  "format": "date"
+                }
+              }
+            }
+          }
+        }
+      },
+      "StartContractResponse": {
+        "type": "object",
+        "required": [
+          "contractId",
+          "contractNumber"
+        ],
+        "properties": {
+          "contractId": {
+            "description": "The identification number of the contract.",
+            "type": "integer",
+            "format": "int32",
+            "example": "235587",
+            "nullable": false
+          },
+          "contractNumber": {
+            "description": "The number of the contract.",
+            "type": "string",
+            "example": "567852",
+            "nullable": false
+          }
+        }
+      },
+      "GenerateSepaMandateRequest": {
+        "type": "object",
+        "required": [
+          "signingDate",
+          "collectionDate",
+          "limitAmount"
+        ],
+        "properties": {
+          "signingDate": {
+            "description": "Date of signing the contract.",
+            "nullable": false,
+            "type": "string",
+            "format": "date",
+            "example": "2018-08-10"
+          },
+          "collectionDate": {
+            "description": "Date of collecting the money.",
+            "nullable": false,
+            "type": "string",
+            "format": "date",
+            "example": "2018-09-11"
+          },
+          "limitAmount": {
+            "description": "Maximum amount that can be debited.",
+            "nullable": true,
+            "type": "number",
+            "format": "float",
+            "example": "9540.99"
+          }
+        }
+      },
+      "GenerateSepaMandateResponse": {
+        "type": "object",
+        "required": [
+          "documentNumber"
+        ],
+        "properties": {
+          "documentNumber": {
+            "description": "Mandate document number.",
+            "type": "string",
+            "example": "45631",
+            "nullable": false
+          }
+        }
+      },
+      "GetDocumentsResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ProductDocumentTemplate"
+        }
+      },
+      "GetSpecificDocumentsResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ProductDocumentTemplate"
+        }
+      },
+      "UploadDocumentRequest": {
+        "type": "object",
+        "required": [
+          "fileName",
+          "fileContent",
+          "productDocumentTemplate"
+        ],
+        "properties": {
+          "fileName": {
+            "description": "Full filename with file extension.",
+            "nullable": false,
+            "type": "string"
+          },
+          "fileContent": {
+            "description": "The body of the file.",
+            "nullable": false,
+            "type": "string",
+            "format": "binary"
+          },
+          "productDocumentTemplate": {
+            "description": "The document template for which the file is uploaded.  This is provided by the *getDocuments* operation (note that the *uploadedFiles* property from *productDocumentTemplate* is not provided). ",
+            "type": "object",
+            "nullable": false,
+            "required": [
+              "properties"
+            ],
+            "properties": {
+              "id": {
+                "description": "Id is required when Code is NULL.",
+                "nullable": true,
+                "type": "integer",
+                "format": "int32"
+              },
+              "code": {
+                "description": "Code is required when Id is NULL.",
+                "nullable": true,
+                "type": "string"
+              },
+              "properties": {
+                "nullable": false,
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "name": {
+                      "nullable": false,
+                      "type": "string",
+                      "example": "ClientId"
+                    },
+                    "value": {
+                      "nullable": true,
+                      "type": "string",
+                      "example": "4258"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "UploadDocumentResponse": {
+        "type": "object",
+        "required": [
+          "fileId"
+        ],
+        "properties": {
+          "fileId": {
+            "description": "File id in Charisma System.",
+            "type": "string",
+            "format": "uuid",
+            "example": "7854ee4f-07a1-45fa-8791-24400ba74ec5",
+            "nullable": false
+          }
+        }
+      },
+      "DownloadDocumentRequest": {
+        "type": "object",
+        "properties": {
+          "productDocumentTemplate": {
+            "description": "The document template which will be downloaded.  This is provided by the *getDocuments* operation (note that the *uploadedFiles* property from *productDocumentTemplate* does not need to be provided). ",
+            "nullable": false,
+            "$ref": "#/components/schemas/ProductDocumentTemplate"
+          }
+        }
+      },
+      "DownloadedDocumentResponse": {
+        "type": "object",
+        "required": [
+          "fileName",
+          "fileContent",
+          "fileContentType"
+        ],
+        "properties": {
+          "fileName": {
+            "description": "Full filename with file extension.",
+            "nullable": false,
+            "type": "string"
+          },
+          "fileContent": {
+            "description": "The body of the file.",
+            "nullable": false,
+            "type": "string",
+            "format": "binary"
+          },
+          "fileContentType": {
+            "description": "File content type ",
+            "nullable": true,
+            "type": "string"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "contentType": {
+        "in": "header",
+        "name": "Content-Type",
+        "description": "The content type header of the request. Must be always sent for POST and PUT requests. The value should be: *application/json*.",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "example": "application/json"
+      },
+      "requestId": {
+        "in": "header",
+        "name": "X-RequestId",
+        "description": "Unique identifier used in order to uniquely identify the api call",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "example": "bbbd34a5-541b-4827-b66b-ebf3b9b3a844"
+      },
+      "countryCode": {
+        "in": "header",
+        "name": "X-CountryCode",
+        "description": "Country code for which the call is done. VCP related.",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "example": "RO"
+      },
+      "vendorCode": {
+        "in": "header",
+        "name": "X-VendorCode",
+        "description": "Vendor code for which the call is done. VCP related.",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "example": "claas"
+      },
+      "username": {
+        "in": "header",
+        "name": "X-Username",
+        "description": "Username of the person using the system. VCP related.",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "example": "user@company.com"
+      },
+      "legalEntity": {
+        "in": "header",
+        "name": "X-LegalEntity",
+        "description": "Legal entity of the user from the External System.",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "example": "LegalEntity"
+      },
+      "quoteId": {
+        "in": "path",
+        "name": "quoteId",
+        "description": "The id of the quote in Charisma System.",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "example": "10001"
+      }
+    },
+    "responses": {
+      "ResponseErrors": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ResponseError"
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "oauth": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "/oauth/token",
+            "scopes": {}
+          }
+        }
+      }
+    }
+  }
+}

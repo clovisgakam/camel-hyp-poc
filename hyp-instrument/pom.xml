@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <artifactId>hyp-instrument</artifactId>
+  <description>hyp-instrument</description>
+  <modelVersion>4.0.0</modelVersion>
+  <modules>
+    <module>instrument-api</module>
+    <module>instrument-client</module>
+    <module>instrument-server</module>
+    <module>instrument-route</module>
+  </modules>
+  <name>hyp-instrument</name>
+  <packaging>pom</packaging>
+  <parent>
+    <artifactId>dl-hyp</artifactId>
+    <groupId>de.dl.hyp</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <properties>
+    <main.basedir>${project.parent.basedir}</main.basedir>
+  </properties>
+  <version>0.0.1-SNAPSHOT</version>
+</project>

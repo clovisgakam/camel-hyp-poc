@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <artifactId>dl-hyp</artifactId>
+
+  <build>
+    <plugins>
+      <!-- lombok and mapstruct -->
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <artifactId>lombok</artifactId>
+              <groupId>org.projectlombok</groupId>
+              <version>${lombok.version}</version>
+            </path>
+            <path>
+              <artifactId>mapstruct-processor</artifactId>
+              <groupId>org.mapstruct</groupId>
+              <version>${mapstruct.version}</version>
+            </path>
+            <path>
+              <artifactId>lombok-mapstruct-binding</artifactId>
+              <groupId>org.projectlombok</groupId>
+              <version>${lombok-mapstruct-binding.version}</version>
+            </path>
+          </annotationProcessorPaths>
+          <source>11</source>
+          <target>11</target>
+        </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>${maven-compiler-plugin.version}</version>
+      </plugin>
+
+      <!-- pmd -->
+      <plugin>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <configuration>
+          <analysisCache>true</analysisCache>
+          <excludeRoots>
+            <excludeRoot>${project.build.directory}/generated-sources</excludeRoot>
+          </excludeRoots>
+          <failOnViolation>true</failOnViolation>
+          <includeTests>true</includeTests>
+          <linkXRef>false</linkXRef>
+          <minimumTokens>100</minimumTokens>
+          <printFailingErrors>true</printFailingErrors>
+          <rulesets>
+            <ruleset>${main.basedir}/hyp.pmd-ruleset.xml</ruleset>
+          </rulesets>
+          <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+          <targetJdk>${java.version}</targetJdk>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>pmd</goal>
+              <goal>cpd</goal>
+              <goal>cpd-check</goal>
+              <goal>check</goal>
+            </goals>
+            <phase>test</phase>
+          </execution>
+        </executions>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>${pmd.plugin.version}</version>
+      </plugin>
+      <!-- checkstyle -->
+      <plugin>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <configLocation>${main.basedir}/hyp.checkstyle.xml</configLocation>
+          <consoleOutput>true</consoleOutput>
+          <encoding>UTF-8</encoding>
+          <excludes>**/generated/**/*</excludes>
+          <failsOnError>true</failsOnError>
+          <linkXRef>false</linkXRef>
+          <sourceDirectories>
+            <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+          </sourceDirectories>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <id>validate</id>
+            <phase>validate</phase>
+          </execution>
+        </executions>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>${checkstyle-plugin.version}</version>
+      </plugin>
+
+      <!-- code coverage -->
+      <plugin>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <configuration>
+          <propertyName>surefireArgLine</propertyName>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+        </executions>
+        <groupId>org.jacoco</groupId>
+        <version>${jacoco.version}</version>
+      </plugin>
+
+      <!-- junit tests -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>${surefireArgLine}</argLine>
+          <trimStackTrace>false</trimStackTrace>
+        </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>${surefire.version}</version>
+      </plugin>
+
+      <!-- integration tests -->
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <classpathDependencyScopeExclude>provided</classpathDependencyScopeExclude>
+          <trimStackTrace>false</trimStackTrace>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+            </goals>
+            <id>integration-test</id>
+          </execution>
+          <execution>
+            <goals>
+              <goal>verify</goal>
+            </goals>
+            <id>verify</id>
+          </execution>
+        </executions>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>${failsafe.version}</version>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+
+
+    <dependency>
+      <artifactId>junit-jupiter</artifactId>
+      <groupId>org.testcontainers</groupId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <!-- Spring Boot BOM -->
+      <dependency>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <groupId>org.springframework.boot</groupId>
+        <scope>import</scope>
+        <type>pom</type>
+        <version>${spring.boot.version}</version>
+      </dependency>
+      <!-- Camel BOM -->
+      <dependency>
+        <artifactId>camel-spring-boot-bom</artifactId>
+        <groupId>org.apache.camel.springboot</groupId>
+        <scope>import</scope>
+        <type>pom</type>
+        <version>${camel.version}</version>
+      </dependency>
+      <dependency>
+        <artifactId>testcontainers-bom</artifactId>
+        <groupId>org.testcontainers</groupId>
+        <scope>import</scope>
+        <type>pom</type>
+        <version>${testcontainers.version}</version>
+      </dependency>
+      <dependency>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <groupId>org.springframework.cloud</groupId>
+        <scope>import</scope>
+        <type>pom</type>
+        <version>${spring-cloud.version}</version>
+      </dependency>
+      <!-- Lombok -->
+      <dependency>
+        <artifactId>lombok</artifactId>
+        <groupId>org.projectlombok</groupId>
+        <version>${lombok.version}</version>
+      </dependency>
+
+      <dependency>
+        <artifactId>annotations</artifactId>
+        <groupId>org.jetbrains</groupId>
+        <scope>compile</scope>
+        <version>${jetbrains.annotations.version}</version>
+      </dependency>
+      <!-- swagger -->
+      <dependency>
+        <artifactId>swagger-annotations</artifactId>
+        <groupId>io.swagger.core.v3</groupId>
+        <version>${swaggerv3.version}</version>
+      </dependency>
+      <dependency>
+        <artifactId>swagger-annotations</artifactId>
+        <groupId>io.swagger</groupId>
+        <version>${swagger.version}</version>
+      </dependency>
+      <!-- Test -->
+      <dependency>
+        <artifactId>junit-jupiter</artifactId>
+        <groupId>org.junit.jupiter</groupId>
+        <scope>test</scope>
+        <version>${jupiter.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <description>dl-hyp</description>
+  <groupId>de.dl.hyp</groupId>
+  <modelVersion>4.0.0</modelVersion>
+  <modules>
+    <module>hyp-application</module>
+    <module>hyp-instrument</module>
+  </modules>
+  <name>dl-hyp</name>
+
+  <packaging>pom</packaging>
+
+  <properties>
+    <build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
+    <camel.version>3.14.1</camel.version>
+    <checkstyle-plugin.version>3.1.0</checkstyle-plugin.version>
+    <dependency.locations.enabled>false</dependency.locations.enabled>
+    <failsafe.version>3.0.0-M3</failsafe.version>
+    <jacoco.version>0.8.5</jacoco.version>
+    <!-- Hard reference to main lib. -->
+    <java.version>11</java.version>
+    <!-- Common properties -->
+    <jetbrains.annotations.version>17.0.0</jetbrains.annotations.version>
+    <junit.platform.commons.version>1.5.2</junit.platform.commons.version>
+    <jupiter.version>5.5.2</jupiter.version>
+    <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+    <lombok.version>1.18.12</lombok.version>
+    <main.basedir>${project.basedir}</main.basedir>
+    <mapstruct.version>1.4.2.Final</mapstruct.version>
+    <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+    <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <pmd.plugin.version>3.13.0</pmd.plugin.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- Test libs -->
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <spring-cloud.version>2021.0.0</spring-cloud.version>
+    <spring.boot.version>2.6.0</spring.boot.version>
+    <surefire.version>3.0.0-M3</surefire.version>
+    <swagger-codegen-generators.version>1.0.19</swagger-codegen-generators.version>
+    <swagger-codegen-maven-plugin.version>3.0.19</swagger-codegen-maven-plugin.version>
+    <swagger.version>1.5.23</swagger.version>
+    <swaggerv3.version>2.1.0</swaggerv3.version>
+    <testcontainers.version>1.16.2</testcontainers.version>
+  </properties>
+
+  <version>0.0.1-SNAPSHOT</version>
+
+</project>

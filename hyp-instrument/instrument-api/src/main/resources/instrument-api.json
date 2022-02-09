@@ -1,0 +1,156 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "MusicalInstrumentsAPI",
+    "description": "This is a sample Musical Instruments API.",
+    "version": "2.0.4"
+  },
+  "host": "test-8a2d8c1c7e672bcb017e6d5333b60040.central.eu-fr.axwayamplify.com",
+  "basePath": "/music/v2",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/instruments/{id}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "The find succeeded, and the results are available.",
+            "schema": {
+              "$ref": "#/definitions/instruments"
+            }
+          },
+          "400": {
+            "description": "Bad request."
+          },
+          "401": {
+            "description": "This request requires user authentication, as configured by the server."
+          },
+          "404": {
+            "description": "No results were found."
+          },
+          "500": {
+            "description": "Something went wrong during the request; check out the logs on your server."
+          }
+        },
+        "description": "Find instrument by ID",
+        "operationId": "FindInstrumentByID",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The instrument ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "instruments"
+        ],
+        "x-flow": "instruments-findByID"
+      }
+    },
+    "/instruments": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "The find all succeeded, and the results are available.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/instruments"
+              }
+            }
+          },
+          "401": {
+            "description": "This request requires user authentication, as configured by the server."
+          },
+          "404": {
+            "description": "No results were found."
+          },
+          "500": {
+            "description": "Something went wrong during the request; check out the logs on your server."
+          }
+        },
+        "description": "Retrieve all instruments",
+        "operationId": "FindInstruments",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "instruments"
+        ],
+        "x-flow": "instruments-findAll"
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "The find all succeeded, and the results are available.",
+            "schema": {
+              "$ref": "#/definitions/instruments"
+            }
+          },
+          "401": {
+            "description": "This request requires user authentication, as configured by the server."
+          },
+          "404": {
+            "description": "No results were found."
+          },
+          "500": {
+            "description": "Something went wrong during the request; check out the logs on your server."
+          }
+        },
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Instrument",
+            "description": "The Instrument to create.",
+            "schema": {
+              "$ref": "#/definitions/instruments"
+            }
+          }
+        ],
+        "summary": "Single payment initiation request",
+        "description": "This method is used to initiate a payment at the Fintech Server.",
+        "operationId": "CreateInstrument",
+        "tags": [
+          "instruments"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "instruments": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "The type of instrument.",
+          "type": "string"
+        },
+        "price": {
+          "description": "The price of the instrument.",
+          "type": "integer"
+        },
+        "currency": {
+          "description": "The price currency.",
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,262 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MusicalInstrumentsAPI",
+    "description": "This is a sample Musical Instruments API.",
+    "version": "2.0.4"
+  },
+  "servers": [
+    {
+      "url": "https://test-8a2d8c1c7e672bcb017e6d5333b60040.central.eu-fr.axwayamplify.com/music/v2"
+    }
+  ],
+  "paths": {
+    "/oauth/token": {
+      "post": {
+        "operationId": "getToken",
+        "summary": "Get token",
+        "description": "Get a bearer token by providing the client id and the client secret from the External System.",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/GetTokenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTokenResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/instruments/{id}": {
+      "get": {
+        "tags": [
+          "instruments"
+        ],
+        "description": "Find instrument by ID",
+        "operationId": "FindInstrumentByID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The instrument ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The find succeeded, and the results are available.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instruments"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {}
+          },
+          "401": {
+            "description": "This request requires user authentication, as configured by the server.",
+            "content": {}
+          },
+          "404": {
+            "description": "No results were found.",
+            "content": {}
+          },
+          "500": {
+            "description": "Something went wrong during the request; check out the logs on your server.",
+            "content": {}
+          }
+        },
+        "x-flow": "instruments-findByID"
+      }
+    },
+    "/instruments": {
+      "get": {
+        "tags": [
+          "instruments"
+        ],
+        "description": "Retrieve all instruments",
+        "operationId": "FindInstruments",
+        "responses": {
+          "200": {
+            "description": "The find all succeeded, and the results are available.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/instruments"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "This request requires user authentication, as configured by the server.",
+            "content": {}
+          },
+          "404": {
+            "description": "No results were found.",
+            "content": {}
+          },
+          "500": {
+            "description": "Something went wrong during the request; check out the logs on your server.",
+            "content": {}
+          }
+        },
+        "x-flow": "instruments-findAll"
+      },
+      "post": {
+        "tags": [
+          "instruments"
+        ],
+        "summary": "Single payment initiation request",
+        "description": "This method is used to initiate a payment at the Fintech Server.",
+        "operationId": "CreateInstrument",
+        "requestBody": {
+          "description": "The user to create.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/instruments"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "The find all succeeded, and the results are available.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/instruments"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "This request requires user authentication, as configured by the server.",
+            "content": {}
+          },
+          "404": {
+            "description": "No results were found.",
+            "content": {}
+          },
+          "500": {
+            "description": "Something went wrong during the request; check out the logs on your server.",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "Instrument"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "instruments": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The type of instrument."
+          },
+          "price": {
+            "type": "integer",
+            "description": "The price of the instrument."
+          },
+          "currency": {
+            "type": "string",
+            "description": "The price currency."
+          },
+          "id": {
+            "type": "string",
+            "description": "The instrument id."
+          }
+        }
+      },
+      "GetTokenRequest": {
+        "type": "object",
+        "required": [
+          "grant_type",
+          "client_id",
+          "client_secret"
+        ],
+        "properties": {
+          "grant_type": {
+            "description": "Supported grant type is *client_credentials*.",
+            "nullable": false,
+            "type": "string",
+            "example": "client_credentials"
+          },
+          "client_id": {
+            "nullable": false,
+            "type": "string"
+          },
+          "client_secret": {
+            "type": "string",
+            "nullable": false
+          }
+        }
+      },
+      "GetTokenResponse": {
+        "type": "object",
+        "required": [
+          "access_token",
+          "token_type",
+          "expires_in"
+        ],
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "nullable": false
+          },
+          "token_type": {
+            "type": "string",
+            "nullable": false
+          },
+          "expires_in": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": false
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "oauth": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "/oauth/token",
+            "scopes": {}
+          }
+        }
+      }
+    }
+  }
+}
